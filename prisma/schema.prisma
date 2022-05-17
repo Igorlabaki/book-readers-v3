@@ -1,0 +1,137 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+  shadowDatabaseUrl    = env("SHADOW_DATA_BASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+model User {
+  id            String      @id @default(cuid())
+  username      String?
+  email         String?     @unique
+  emailVerified DateTime?   @map("email_verified")
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  created_at    DateTime    @default(now())
+  Books         UserBooks[]
+  Posts         Posts[]
+  Comments      Comments[]
+  Likes         Likes[]
+
+  @@map("users")
+}
+
+model Posts {
+  id         String     @id @default(uuid())
+  text       String
+  created_at DateTime   @default(now())
+  user_id    String
+  user       User       @relation(fields: [user_id], references: [id])
+  book_id    String?
+  book       Books?     @relation(fields: [book_id], references: [id])
+  Comments   Comments[]
+  Likes      Likes[]
+
+  @@map("posts")
+}
+
+model Comments {
+  id         String   @id @default(uuid())
+  text       String
+  user_id    String
+  post_id    String
+  user       User     @relation(fields: [user_id], references: [id])
+  post       Posts    @relation(fields: [post_id], references: [id])
+  created_at DateTime @default(now())
+
+  @@map("comments")
+}
+
+model Books {
+  id             String      @id @default(uuid())
+  google         String
+  title          String?     @unique
+  authors        String?
+  subtitle       String?
+  pageCount      Int?
+  categories     String?
+  created_at     DateTime    @default(now())
+  description    String?     @db.VarChar(200)
+  publishedDate  String?
+  smallThumbnail String?     @default("/images/photos/book-default.jpg") @db.VarChar(500)
+  User           UserBooks[]
+  Posts          Posts[]
+
+  @@map("books")
+}
+
+model UserBooks {
+  id               String   @id @default(uuid())
+  book             Books    @relation(fields: [fk_id_book], references: [id])
+  fk_id_book       String
+  user             User     @relation(fields: [fk_id_user], references: [id])
+  fk_id_user       String
+  created_at       DateTime @default(now())
+  currentlyReading Boolean  @default(false)
+  wantRead         Boolean  @default(false)
+
+  @@map("userBooks")
+}
+
+model Likes {
+  id         String   @id @default(uuid())
+  like       Boolean  @default(false)
+  post_id    String
+  post       Posts    @relation(fields: [post_id], references: [id])
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id])
+  created_at DateTime @default(now())
+}
