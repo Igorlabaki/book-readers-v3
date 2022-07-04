@@ -1,35 +1,47 @@
-import { GetServerSideProps } from 'next';
-import { getSession, signOut, useSession } from 'next-auth/react'
-import { ImExit } from 'react-icons/im';
+import { GetServerSideProps } from "next";
+import { getSession } from "next-auth/react";
+import HeaderComponent from "../Components/Header";
+import { useEffect } from "react";
+import useUserContext from "../Hooks/useUserContext";
+import axios from "axios";
+import { LayoutComponent } from "../Components/util/layout";
+import { InputPostComponent } from "../Components/inputPost";
+import { CardComponent } from "../Components/util/Card";
+import usePostsContext from "../Hooks/usePostsContext";
+import { PostComponent } from "../Components/Post";
 
-export default function HomePage() {
+export default function HomePage({ data }) {
+  const userId = data.id;
 
-    const {data: session} = useSession() 
-    
-    return (
-      <>
-        <div className="flex justify-center items-center h-screen">
-          <div className="flex border-2 rounded-lg p-4 bg-blue-100">
-            <img src={session?.user?.image} className='h-24 w-24 rounded-full' alt="avatar user"/>
-            <div className="ml-5">
-              <h3 className="text-3xl font-bold">Seja Bem vindo!</h3>
-              <p className="font-bold">{session?.user?.name}</p>
-              <div className="flex justify-between items-center">
-                <p className="font-bold">{session?.user?.email}</p>
-                <ImExit onClick={() => signOut()} className='text-red-700  cursor-pointer'/>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    )
+  const { allPosts, getPosts } = usePostsContext();
+  const { getUser } = useUserContext();
+
+  useEffect(() => {
+    getPosts();
+  }, []);
+
+  useEffect(() => {
+    getUser(userId);
+  }, []);
+
+  return (
+    <div className="w-[100%] bg-bg-gray py-24 space-y-3">
+      <HeaderComponent />
+      <InputPostComponent />
+      <p className="w-[80%] m-auto text-3xl font-bold">Feed</p>
+      {allPosts?.map((post) => {
+        return <PostComponent key={post.id} post={post} />;
+      })}
+    </div>
+  );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-
   const session = await getSession(context);
 
-  if(!session) {
+  const user = session.user;
+
+  if (!session) {
     return {
       redirect: {
         permanent: false,
@@ -41,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      session
-    }
-  }
-}
+      data: user,
+    },
+  };
+};

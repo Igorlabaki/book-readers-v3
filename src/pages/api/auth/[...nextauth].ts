@@ -1,7 +1,7 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import NextAuth from "next-auth"
 import GithubProvider from "next-auth/providers/github"
-import prisma from "../../../../lib/prisma"
+import {prisma} from "../../../../lib/prisma"
 
 export const authOptions = {
   providers: [
@@ -11,7 +11,6 @@ export const authOptions = {
       profile(profile){
         return{
           id: profile.id.toString(),
-          username: profile.login,
           email: profile.email,
           image: profile.avatar_url
         }
@@ -25,6 +24,7 @@ export const authOptions = {
       ...session,
       user:{
         ...session.user,
+        username:   user.username,
         id:        user.id,
         books:     user.books || [],      
         posts:     user.posts || [],    

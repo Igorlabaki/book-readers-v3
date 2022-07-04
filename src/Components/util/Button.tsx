@@ -1,16 +1,16 @@
-import { ButtonHTMLAttributes } from 'react'
+import { ButtonHTMLAttributes, ReactNode } from "react";
 
-interface Props extends ButtonHTMLAttributes<any>{
-    title:      string
-    className:  string
-} 
+interface Props extends ButtonHTMLAttributes<any> {
+  title?: string;
+  className?: string;
+  icon?: ReactNode;
+}
 
-export  function Button({title,className,...rest} : Props) {
+export function Button({ title, className, icon, ...rest }: Props) {
   return (
     <button {...rest} className={className}>
-        <p>
-            {title}
-        </p>
+      {icon ? icon : null}
+      <p>{title}</p>
     </button>
-  )
+  );
 }

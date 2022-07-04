@@ -1,27 +1,36 @@
-import {createContext,ReactNode,useState} from 'react'
-
+import axios from "axios";
+import { createContext, ReactNode, useState } from "react";
 interface UserContextProvider {
-    children: ReactNode
+  children: ReactNode;
+}
+interface UserContext {
+  user?: any;
+  getUser?: (id: string) => void;
 }
 
-interface UserContext{
+const initialState: UserContext = {};
 
-}
+export const UserContext = createContext<UserContext>(initialState);
 
-const initialState: UserContext = {
+export function UserContextProvider({ children }: UserContextProvider) {
+  const [user, setUser] = useState<any>(null);
 
-}
+  async function getUser(userId: string) {
+    const resp = await axios
+      .get(`/api/user/${userId}`)
+      .then((resp) => resp.data);
 
-export const UserContext = createContext<UserContext>(initialState)
+    setUser(() => resp);
+  }
 
-export function userContextProvider( {children}: UserContextProvider){
-
-
-    return(
-        <UserContext.Provider value={{
-            
-        }}>
-            {children}
-        </UserContext.Provider>
-    )
+  return (
+    <UserContext.Provider
+      value={{
+        user,
+        getUser,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
 }
