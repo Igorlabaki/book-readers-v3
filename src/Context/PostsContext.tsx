@@ -1,5 +1,5 @@
-import { Comments, Likes, Posts } from "@prisma/client";
-import axios from "axios";
+import { Comments, Posts } from "@prisma/client";
+
 import {
   createContext,
   Dispatch,
@@ -15,6 +15,7 @@ interface ContextProvider {
 interface PostsContext {
   error?: string;
   isLoading?: boolean;
+  isGetBookLoading?: boolean;
 
   allPosts?: Posts[];
   setallPosts?: Dispatch<SetStateAction<Posts[]>>;
@@ -24,8 +25,10 @@ interface PostsContext {
   createLike?: (post: Posts, userId: String) => void;
   deleteLike?: (likeId: String) => void;
   getLike?: (postId: String, userId: String) => void;
-  liked?: Boolean;
-  likeId?: String;
+
+  createComment?: (post: object, comment: String, userId: string) => void;
+  getComments?: (postId: String) => void;
+  commentList?: Comments[];
 
   createPost?: (post: object) => void;
   getPosts?: () => Promise<any>;
@@ -54,8 +57,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [liked, setLiked] = useState<Boolean>();
-  const [likeId, setLikeId] = useState<String>();
+  const [commentList, setCommentList] = useState<Comments[]>([]);
 
   const [currentPostPage, setCurrentPostPage] = useState<number>(1);
   const [postsPerPage, setPostsPerPage] = useState<number>(5);
@@ -66,6 +68,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
   }
 
   async function createPost(postInput: Posts) {
+    setIsLoading(true);
     try {
       const post = await fetch("/api/post", {
         method: "POST",
@@ -76,9 +79,11 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error.message);
     }
+    setTimeout(() => setIsLoading(false), 3000);
   }
 
   async function deletePost(postInput: Posts) {
+    setIsLoading(true);
     try {
       const post = await fetch("/api/post", {
         method: "DELETE",
@@ -88,9 +93,11 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error);
     }
+    setTimeout(() => setIsLoading(false), 2000);
   }
 
   async function updatePost(postInput: Posts, changes) {
+    setIsLoading(true);
     const inputInfo = {
       ...postInput,
       text: changes,
@@ -104,6 +111,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error);
     }
+    setTimeout(() => setIsLoading(false), 2000);
   }
 
   async function getPosts() {
@@ -121,6 +129,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
     userInputId: String,
     postText: string
   ) {
+    setIsLoading(true);
     if (postText != "") {
       const postBookInput = {
         bookId: bookInputId,
@@ -133,13 +142,13 @@ export function PostsContextProvider({ children }: ContextProvider) {
           body: JSON.stringify(postBookInput),
         });
         getPosts();
-        console.log(allPosts);
       } catch (error) {
         console.log(error);
       }
     } else {
       showError("", 3000);
     }
+    setTimeout(() => setIsLoading(false), 2000);
   }
 
   async function createLike(post: Posts, userId: String) {
@@ -149,10 +158,11 @@ export function PostsContextProvider({ children }: ContextProvider) {
     };
 
     try {
-      await fetch("/api/like", {
+      const response = await fetch("/api/like", {
         method: "POST",
         body: JSON.stringify(inputLike),
       });
+      const result = await response.json();
       getPosts();
     } catch (error) {
       console.log(error);
@@ -160,19 +170,12 @@ export function PostsContextProvider({ children }: ContextProvider) {
   }
 
   async function getLike(postId: String, userId: String) {
-    const inputLike = {
-      idP: postId,
-      idU: userId,
-    };
-
     const url = `/api/like/${postId}/${userId}`;
-
+    console.log(url);
     try {
       const response = await fetch(url, {
         method: "GET",
       });
-      const result = await response.json();
-      console.log(result);
     } catch (error) {
       console.log(error);
     }
@@ -180,11 +183,50 @@ export function PostsContextProvider({ children }: ContextProvider) {
 
   async function deleteLike(likeId: String) {
     try {
-      await fetch("/api/like", {
+      const response = await fetch("/api/like", {
         method: "DELETE",
         body: JSON.stringify(likeId),
       });
+      const result = await response.json();
       getPosts();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function createComment(
+    postInput: Posts,
+    comment: String,
+    userId: string
+  ) {
+    const info = {
+      ...postInput,
+      comment: comment,
+      user: userId,
+    };
+    if (postInput.text != "") {
+      try {
+        await fetch("/api/comment", {
+          method: "POST",
+          body: JSON.stringify(info),
+        });
+        getPosts();
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      showError("", 3000);
+    }
+  }
+
+  async function getComments(postId: String) {
+    try {
+      const response = await fetch(`/api/comment/${postId}`, {
+        method: "GET",
+      });
+      const result = await response.json();
+      console.log(result);
+      setCommentList(result);
     } catch (error) {
       console.log(error);
     }
@@ -202,8 +244,10 @@ export function PostsContextProvider({ children }: ContextProvider) {
         createLike,
         deleteLike,
         getLike,
-        liked,
-        likeId,
+
+        createComment,
+        getComments,
+        commentList,
 
         createBookPost,
 

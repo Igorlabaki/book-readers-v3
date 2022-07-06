@@ -11,8 +11,9 @@ export const authOptions = {
       profile(profile){
         return{
           id: profile.id.toString(),
+          username: profile.name || profile.login,
           email: profile.email,
-          image: profile.avatar_url
+          image: profile.avatar_url,
         }
       }
     }),
@@ -24,7 +25,6 @@ export const authOptions = {
       ...session,
       user:{
         ...session.user,
-        username:   user.username,
         id:        user.id,
         books:     user.books || [],      
         posts:     user.posts || [],    

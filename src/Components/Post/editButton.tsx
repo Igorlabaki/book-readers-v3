@@ -14,7 +14,11 @@ interface EditProps {
   openTextAreaModal?: any;
 }
 
-export function EditButtonComponent({ post, openTextAreaModal }: EditProps) {
+export function EditButtonComponent({
+  post,
+  openTextAreaModal,
+  comment,
+}: EditProps) {
   const { user } = useUserContext();
   const { deletePost, updatePost } = usePostsContext();
 
@@ -29,12 +33,12 @@ export function EditButtonComponent({ post, openTextAreaModal }: EditProps) {
   }
   return (
     <div className="relative">
-      {post?.user_id == user?.id ? (
-        <div className="cursor-pointer">
-          <BsThreeDots onClick={handleOpenModal} />
+      {post?.user_id == user?.id || comment?.user_id == user?.id ? (
+        <div>
+          <BsThreeDots onClick={handleOpenModal} className={`cursor-pointer`} />
         </div>
       ) : null}
-      {modal && post ? (
+      {(modal && post) || (modal && comment) ? (
         <ModalDropDownMenu onClose={handleCloseModal}>
           <Button
             title="Edit"

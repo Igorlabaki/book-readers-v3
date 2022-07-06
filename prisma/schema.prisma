@@ -110,6 +110,7 @@ model Books {
   User           UserBooks[]
   Posts          Posts[]
 
+
   @@map("books")
 }
 

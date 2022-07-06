@@ -1,23 +1,24 @@
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 import HeaderComponent from "../Components/Header";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useUserContext from "../Hooks/useUserContext";
-import axios from "axios";
-import { LayoutComponent } from "../Components/util/layout";
 import { InputPostComponent } from "../Components/inputPost";
-import { CardComponent } from "../Components/util/Card";
 import usePostsContext from "../Hooks/usePostsContext";
 import { PostComponent } from "../Components/Post";
+import { LoadingComponent } from "../Components/Post/loading";
 
 export default function HomePage({ data }) {
   const userId = data.id;
 
-  const { allPosts, getPosts } = usePostsContext();
+  const { allPosts, getPosts, isLoading } = usePostsContext();
   const { getUser } = useUserContext();
+  const [isGetBookLoading, setIsGetBookLoading] = useState(false);
 
   useEffect(() => {
+    setIsGetBookLoading(true);
     getPosts();
+    setTimeout(() => setIsGetBookLoading(false), 1500);
   }, []);
 
   useEffect(() => {
@@ -25,13 +26,19 @@ export default function HomePage({ data }) {
   }, []);
 
   return (
-    <div className="w-[100%] bg-bg-gray py-24 space-y-3">
+    <div className="w-[100%] bg-bg-gray py-24 space-y-3 h-[100%]">
       <HeaderComponent />
       <InputPostComponent />
       <p className="w-[80%] m-auto text-3xl font-bold">Feed</p>
-      {allPosts?.map((post) => {
-        return <PostComponent key={post.id} post={post} />;
-      })}
+      {isLoading || isGetBookLoading ? (
+        <LoadingComponent />
+      ) : (
+        <>
+          {allPosts?.map((post) => {
+            return <PostComponent key={post.id} post={post} />;
+          })}
+        </>
+      )}
     </div>
   );
 }
@@ -39,7 +46,7 @@ export default function HomePage({ data }) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
 
-  const user = session.user;
+  const user = session?.user;
 
   if (!session) {
     return {

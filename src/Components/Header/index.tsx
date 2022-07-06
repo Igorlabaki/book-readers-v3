@@ -1,7 +1,7 @@
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { Component, useState } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { IoMdLogOut } from "react-icons/io";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { ModalDropDownMenu } from "../Modals/menuDropDownModal";
@@ -13,6 +13,7 @@ export default function HeaderComponent() {
   const { data: session } = useSession();
 
   const [dropDownMenu, setDropDownMenu] = useState(false);
+  const [loadingData, setLoadingData] = useState<boolean>(true);
 
   function handleCloseDropDownMenu() {
     setDropDownMenu(false);
@@ -21,6 +22,12 @@ export default function HeaderComponent() {
   function handleOpenDropDownMenu() {
     setDropDownMenu(true);
   }
+
+  useEffect(() => {
+    if (!session) {
+      setTimeout(() => setLoadingData(false), 1500);
+    }
+  }, []);
 
   return (
     <header className="flex justify-between w-full px-4 m-auto fixed top-0 bg-white shadow-pattern">
@@ -34,12 +41,17 @@ export default function HeaderComponent() {
       />
       <SearchInput />
       <div className="ml-5 flex justify-center items-center relative gap-1">
-        <img
-          src={session?.user?.image}
-          className="rounded-full w-14 h-14 cursor-pointer"
-          alt="avatar user"
-          onClick={() => handleOpenDropDownMenu()}
-        />
+        {loadingData ? (
+          <div className="rounded-full w-14 h-14 cursor-pointer bg-gray-300 animate-pulse" />
+        ) : (
+          <img
+            src={session?.user?.image}
+            className="rounded-full w-14 h-14 cursor-pointer"
+            alt="avatar user"
+            onClick={() => handleOpenDropDownMenu()}
+          />
+        )}
+
         {dropDownMenu ? (
           <ModalDropDownMenu onClose={handleCloseDropDownMenu}>
             <Button

@@ -64,7 +64,7 @@ export function SearchInput() {
                     <img
                       src="/images/photos/book-default.jpg"
                       alt=""
-                      className="h-[80px] ml-1"
+                      className="h-[90px] ml-1"
                     />
                   )}
                 </div>
@@ -77,6 +77,7 @@ export function SearchInput() {
                   </h4>
                 </div>
               </div>
+              <hr className="text-black w-[50%] m-auto border-1" />
             </>
           ))}
           <Button
@@ -122,7 +123,7 @@ export function SearchInput() {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full ml-2 outline-none bg-bg-gray rounded-tr-lg"
         />
-        {search && searchListModal ? (
+        {search && searchListModal && !router.asPath.includes("list") ? (
           <SearchListDropDownMenu onClose={handleCloseSearchListModal}>
             {handleResultContainer()}
           </SearchListDropDownMenu>

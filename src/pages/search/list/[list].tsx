@@ -10,8 +10,9 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 import useGoogleBooksContext from "../../../Hooks/useGoogleBooksContext";
-import { text } from "stream/consumers";
 import useUserContext from "../../../Hooks/useUserContext";
+import { CardComponent } from "../../../Components/util/Card";
+import { LoadingListComponent } from "../../../Components/util/listLoadingPage";
 
 interface SearchProps {
   search?: any;
@@ -62,6 +63,8 @@ export default function SearchListComponent() {
   const [elementsPerPage, setElementsPerPage] = useState(5);
   const [totalElements, setTotalElements] = useState<Number>();
 
+  const [loadingPage, setLoadingPage] = useState<boolean>(false);
+
   const [text, setText] = useState("");
 
   const indexOfLastBook = currentPage * elementsPerPage;
@@ -88,85 +91,92 @@ export default function SearchListComponent() {
   }
 
   useEffect(() => {
+    setLoadingPage(true);
     getBooks(list, "40");
     setTotalElements(booksSearch.length);
+    setTimeout(() => setLoadingPage(false), 2500);
   }, [router.asPath]);
 
   return (
-    <div className="flex flex-col h-screen lg:w-[80%] w-[100%] m-auto px-2 relative space-y-5">
+    <div className="w-[100%] bg-bg-gray py-24 space-y-3">
       <HearderComponent />
-      {currentBooks.map((book) => {
-        return (
-          <>
-            <div
-              className="flex justify-start items-center w-full shadow-lg p-4 rounded-lg gap-4 bg-blue-50"
-              key={book?.id}
-            >
-              {book?.volumeInfo?.imageLinks ? (
-                <img
-                  src={book?.volumeInfo?.imageLinks?.thumbnail}
-                  alt="book cover"
-                  className="h-min-[200px] cursor-pointer"
-                  onClick={() => router.push(`/search/id/${book.id}`)}
-                />
-              ) : (
-                <img
-                  src="/images/photos/book-default.jpg"
-                  alt=""
-                  className="h-[200px] cursor-pointer"
-                  onClick={() => router.push(`/search/id/${book.id}`)}
-                />
-              )}
-              <div className="w-[100%] ">
-                <div className="flex justify-between">
-                  <h2 className="font-bold">{book?.volumeInfo?.title}</h2>
-                  <Button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      getBook(book.id);
-                      handleOpenAddBookModal();
-                    }}
-                    icon={<BiBookAdd size={17} className="text-primary" />}
-                    className="flex text-white p-[10px] rounded-[0.5rem] justify-center items-center right-0 hover:scale-125"
-                  />
+      {loadingPage ? (
+        <LoadingListComponent />
+      ) : (
+        currentBooks.map((book) => {
+          return (
+            <>
+              <CardComponent key={book?.id}>
+                <div className="flex space-x-3">
+                  {book?.volumeInfo?.imageLinks ? (
+                    <img
+                      src={book?.volumeInfo?.imageLinks?.thumbnail}
+                      alt="book cover"
+                      className="h-min-[200px] cursor-pointer"
+                      onClick={() => router.push(`/search/id/${book.id}`)}
+                    />
+                  ) : (
+                    <img
+                      src="/images/photos/book-default.jpg"
+                      alt=""
+                      className="h-[200px] cursor-pointer"
+                      onClick={() => router.push(`/search/id/${book.id}`)}
+                    />
+                  )}
+                  <div className="w-[100%] ">
+                    <div className="flex justify-between">
+                      <h2 className="font-bold">{book?.volumeInfo?.title}</h2>
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          getBook(book.id);
+                          handleOpenAddBookModal();
+                        }}
+                        icon={<BiBookAdd size={20} className="text-primary" />}
+                        className="flex text-white p-[10px] rounded-[0.5rem] justify-center items-center right-0 hover:scale-105"
+                      />
+                    </div>
+                    <p>
+                      <strong>Author:</strong>&nbsp;
+                      {book?.volumeInfo?.authors?.at(0)}
+                    </p>
+                    <p>
+                      <strong>Category:</strong>&nbsp;
+                      {book?.volumeInfo?.categories?.at(0)}
+                    </p>
+                    <div className="flex space-x-2">
+                      <p>
+                        <strong>Published:</strong>
+                        &nbsp;{book?.volumeInfo?.publishedDate}
+                      </p>
+                      <p>
+                        <strong>Pages:</strong>
+                        &nbsp;{book?.volumeInfo?.pageCount}
+                      </p>
+                    </div>
+                    <div className="text-justify w-[90%]">
+                      {book?.volumeInfo?.description?.slice(0, 300)}...
+                    </div>
+                  </div>
                 </div>
-                <p>
-                  <strong>Author:</strong>&nbsp;
-                  {book?.volumeInfo?.authors?.at(0)}
-                </p>
-                <p>
-                  <strong>Category:</strong>&nbsp;
-                  {book?.volumeInfo?.categories?.at(0)}
-                </p>
-                <div className="flex space-x-2">
-                  <p>
-                    <strong>Published:</strong>
-                    &nbsp;{book?.volumeInfo?.publishedDate}
-                  </p>
-                  <p>
-                    <strong>Pages:</strong>
-                    &nbsp;{book?.volumeInfo?.pageCount}
-                  </p>
-                </div>
-                <div>{book?.volumeInfo?.description?.slice(0, 300)}...</div>
-              </div>
-            </div>
-          </>
-        );
-      })}
+              </CardComponent>
+            </>
+          );
+        })
+      )}
       {addBookModal ? (
         <AddBookModalComponent onClose={handleCloseAddBookModal}>
-          <div className="bg-white flex flex-row  justify-center p-14 rounded-lg gap-5 relative">
+          <div className="bg-white flex flex-row  justify-center py-10 px-10 rounded-lg gap-5 relative ">
             <GrFormClose
               size={20}
-              className="absolute right-10 top-10 cursor-pointer hover:scale-125"
+              className="absolute right-2 top-2 cursor-pointer hover:scale-125"
               onClick={() => handleCloseAddBookModal()}
             />
             {book?.volumeInfo?.imageLinks ? (
               <img
                 src={book?.volumeInfo?.imageLinks?.thumbnail}
                 alt=""
-                className="w-[200px]"
+                className="w-[200px] shadow-pattern rounded-md"
               />
             ) : (
               <img
@@ -175,18 +185,20 @@ export default function SearchListComponent() {
                 className="w-[200px]"
               />
             )}
-            <div className="flex-col justify-start items-start flex-1">
+            <div className="flex-col justify-start items-start flex-1 space-y-4">
               <h2 className="font-semibold text-3xl ">
                 {book?.volumeInfo?.title}
               </h2>
-              <p className="font-semibold">
-                by&nbsp;
-                {book?.volumeInfo?.authors?.at(0)}
-              </p>
-              <form className="">
+              {book?.volumeInfo?.authors?.at(0) ? (
+                <p className="font-semibold">
+                  by&nbsp;
+                  {book?.volumeInfo?.authors?.at(0)}
+                </p>
+              ) : null}
+              <form className="space-y-3">
                 <select
                   id="listTypeSelect"
-                  className="cursor-pointer mt-2 border-2"
+                  className="cursor-pointer mt-2 border-2 w-[80%]"
                 >
                   <option value="read" selected>
                     Read
@@ -199,14 +211,20 @@ export default function SearchListComponent() {
                   placeholder={"Enter your review..."}
                   value={text}
                   onChange={(e) => setText(e.target.value)}
+                  className="resize-none w-[80%] bg-bg-gray
+                  rounded-md px-3 py-3 outline-none h-[180px]"
                 ></textarea>
                 <Button
-                  title="Ok"
+                  title="Confirm"
                   onClick={(e) => {
                     e.preventDefault();
                     createBook(book, text, user?.id, "read");
+                    router.push("/homePage");
                   }}
-                  className="bg-primary mt-24 flex text-white p-[10px] rounded-[0.25rem] w-[50%] justify-center items-center hover:scale-105"
+                  disabled={text ? false : true}
+                  className={`${
+                    !text ? "bg-[#BBBFC1]" : "bg-blue-900"
+                  } mt-24 flex text-white p-[10px] rounded-[0.25rem] w-[50%] justify-center items-center hover:brightness-105`}
                 ></Button>
               </form>
             </div>
@@ -214,7 +232,7 @@ export default function SearchListComponent() {
         </AddBookModalComponent>
       ) : null}
       {totalPages > 1 ? (
-        <div className="flex justify-center items-center gap-2">
+        <div className="flex justify-center items-center gap-1">
           {currentPage > 1 ? (
             <Button
               onClick={() => downPage()}
@@ -237,7 +255,7 @@ export default function SearchListComponent() {
                     ? "bg-primary text-secundary border-black"
                     : "bg-blue-100 text-primary border-primary"
                 }
-                 border-[1px]  cursor-pointer p-1  w-[1.5rem] h-[1.5rem] hover:bg-secundary flex justify-center items-center`}
+                 border-[1px]  cursor-pointer p-1  w-[1.5rem] h-[1.5rem] hover:brightness-110 flex justify-center items-center`}
               >
                 {number}
               </a>

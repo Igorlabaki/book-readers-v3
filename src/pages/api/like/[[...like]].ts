@@ -1,7 +1,23 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../../lib/prisma";
 
-export  async function  Like(req:NextApiRequest,resp: NextApiResponse){
+export  default async function  Like(req:NextApiRequest,resp: NextApiResponse){
+  
+  if(req.method === 'GET'){
+    try {
+      const { like } = req.query
+      const response = await prisma.likes.findFirst({
+        where:{
+          post_id: like[0],
+          user_id: like[1]
+        },  
+      });
+        return resp.status(200).json(response)
+      }  catch (error) {
+        console.log(error)
+        return resp.status(200).json({ message: error.message})
+    }
+  }
 
   if(req.method === "POST"){
     const postInfo  = JSON.parse(req.body)
@@ -34,10 +50,10 @@ export  async function  Like(req:NextApiRequest,resp: NextApiResponse){
         where:{
             id: idLike
         }
-      });
+    });
       return resp.status(200).json(deletedlike)
       }  catch (error) {
-      return resp.json({ message: error.message})
+        return resp.json({ message: error.message})
     }
   }
 

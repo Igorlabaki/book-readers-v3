@@ -2,31 +2,57 @@ import { useEffect, useState } from "react";
 import { FcLike, FcLikePlaceholder } from "react-icons/fc";
 import usePostsContext from "../../Hooks/usePostsContext";
 import useUserContext from "../../Hooks/useUserContext";
+import { Button } from "../util/Button";
 
 interface likeProps {
   post: any;
 }
 
 export function LikeComponent({ post }: likeProps) {
-  const { liked, likeId, createLike, deleteLike, getLike } = usePostsContext();
+  const { createLike, deleteLike } = usePostsContext();
+  const [liked, setLiked] = useState<Boolean>(false);
+  const [likeId, setLikeId] = useState<String>();
+
   const { user } = useUserContext();
 
-  useEffect(() => {}, []);
+  async function getLike(postId: String, userId: String) {
+    const info = {
+      idP: postId,
+      idU: userId,
+    };
+
+    try {
+      const response = await fetch(`/api/like/${postId}/${userId}`, {
+        method: "GET",
+      });
+
+      const result = await response.json();
+
+      if (result) {
+        setLiked(true);
+        setLikeId(result.id);
+      } else {
+        setLiked(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   function handleLikeChange(post) {
     getLike(post?.id, user?.id);
-    console.log(liked);
-
     if (liked) {
       return (
-        <div
-          className="cursor-pointer"
-          onClick={() => {
-            deleteLike(likeId);
-          }}
-        >
-          <FcLike fontSize={20} cursor={"pointer"} />{" "}
-          {`(${post?.Likes.length})`}
+        <div className="flex justify-start items-center">
+          <Button
+            onClick={() => {
+              deleteLike(likeId);
+              setLiked(() => true);
+            }}
+            icon={<FcLike fontSize={19} cursor={"pointer"} className={``} />}
+            className={`cursor-pointer`}
+          />
+          <p className="text-red-700">{`(${post?.Likes.length})`}</p>
         </div>
       );
     } else {
@@ -37,6 +63,7 @@ export function LikeComponent({ post }: likeProps) {
             className="cursor-pointer"
             onClick={() => {
               createLike(post, user?.id);
+              setLiked(() => false);
             }}
           />
           <p className="text-red-200 text-sm">{`(${post?.Likes.length})`}</p>
