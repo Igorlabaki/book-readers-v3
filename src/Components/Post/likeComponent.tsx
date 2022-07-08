@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FcLike, FcLikePlaceholder } from "react-icons/fc";
 import usePostsContext from "../../Hooks/usePostsContext";
 import useUserContext from "../../Hooks/useUserContext";
@@ -9,44 +9,22 @@ interface likeProps {
 }
 
 export function LikeComponent({ post }: likeProps) {
-  const { createLike, deleteLike } = usePostsContext();
+  const { createLike, deleteLike, isLikeLoading } = usePostsContext();
   const [liked, setLiked] = useState<Boolean>(false);
-  const [likeId, setLikeId] = useState<String>();
 
   const { user } = useUserContext();
 
-  async function getLike(postId: String, userId: String) {
-    const info = {
-      idP: postId,
-      idU: userId,
-    };
-
-    try {
-      const response = await fetch(`/api/like/${postId}/${userId}`, {
-        method: "GET",
-      });
-
-      const result = await response.json();
-
-      if (result) {
-        setLiked(true);
-        setLikeId(result.id);
-      } else {
-        setLiked(false);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  const like = post?.Likes.filter((l) => {
+    return l.user.id === user.id;
+  });
 
   function handleLikeChange(post) {
-    getLike(post?.id, user?.id);
-    if (liked) {
+    if (like.length > 0) {
       return (
         <div className="flex justify-start items-center">
           <Button
             onClick={() => {
-              deleteLike(likeId);
+              deleteLike(like[0].id);
               setLiked(() => true);
             }}
             icon={<FcLike fontSize={19} cursor={"pointer"} className={``} />}
@@ -66,7 +44,11 @@ export function LikeComponent({ post }: likeProps) {
               setLiked(() => false);
             }}
           />
-          <p className="text-red-200 text-sm">{`(${post?.Likes.length})`}</p>
+          <p
+            className={`text-red-200 text-sm ${
+              isLikeLoading ? "animate-pulse" : ""
+            }`}
+          >{`(${post?.Likes.length})`}</p>
         </div>
       );
     }

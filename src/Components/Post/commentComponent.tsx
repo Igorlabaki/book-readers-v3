@@ -1,28 +1,66 @@
+import { Comments, Posts } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { MdModeComment } from "react-icons/md";
-import usePostsContext from "../../Hooks/usePostsContext";
-import { Button } from "../util/Button";
+import { EditComponent } from "./editComponent";
+import { MenuButtonComponent } from "./MenuButtonComponent";
 
-interface EditProps {
-  post: any;
+interface PropsInterface {
+  post?: Posts;
 }
 
-export function CommentComponent({ post }: EditProps) {
-  const noComment = post?.Comments.length == 0;
+export function CommentComponent({ post }: PropsInterface) {
+  const [commentList, setCommentList] = useState<Comments[]>([]);
+
+  async function getComments(postId: String) {
+    try {
+      const response = await fetch(`/api/comment/${postId}`, {
+        method: "GET",
+      });
+      const result = await response.json();
+      setCommentList(result);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const [textAreaIsOpen, setTextAreaIsOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    getComments(post?.id);
+  }, []);
 
   return (
     <>
-      <div className="flex justify-center items-center">
-        {noComment ? (
-          <MdModeComment fontSize={20} color={"#d0edad"} />
-        ) : (
-          <MdModeComment fontSize={20} color={" #8BC34A"} />
-        )}
-        <p
-          className={`${noComment ? "text-[#d0edad]" : "text-[#8BC34A]"}`}
-        >{`(${post?.Comments.length})`}</p>
-      </div>
+      {post?.Comments?.map((comment: Comments) => {
+        return (
+          <>
+            <div key={comment?.id} className={`ml-[75px] flex space-x-2 my-2`}>
+              <img
+                src={comment?.user?.image}
+                alt="avatar"
+                className="h-12 w-12 rounded-full"
+              />
+              <div className="w-[100%]">
+                <div className="flex justify-between items-center">
+                  <p className="font-semibold text-sm">
+                    {comment?.user?.username}
+                  </p>
+                  <MenuButtonComponent
+                    comment={comment}
+                    type="comment"
+                    openTextAreaModal={setTextAreaIsOpen}
+                  />
+                </div>
+                <EditComponent
+                  type={"comment"}
+                  comment={comment}
+                  textAreaIsOpen={textAreaIsOpen}
+                  setTextAreaIsOpen={setTextAreaIsOpen}
+                />
+              </div>
+            </div>
+          </>
+        );
+      })}
     </>
   );
 }

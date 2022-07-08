@@ -1,15 +1,16 @@
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { CardComponent } from "../util/Card";
-import { EditButtonComponent } from "./editButton";
-import EditComponent from "./editComponent";
-import { MdModeComment } from "react-icons/md";
-import { LikeComponent } from "./likeComponent";
-import { CommentComponent } from "./commentComponent";
+
 import useUserContext from "../../Hooks/useUserContext";
-import { Button } from "../util/Button";
+
 import usePostsContext from "../../Hooks/usePostsContext";
 import { Comments } from "@prisma/client";
+import { MenuButtonComponent } from "./MenuButtonComponent";
+import { EditComponent } from "./editComponent";
+import { LikeComponent } from "./likeComponent";
+import { IconCommentComponent } from "./iconComment";
+import { CommentComponent } from "./commentComponent";
 
 export function PostComponent({ post }) {
   const [textAreaIsOpen, setTextAreaIsOpen] = useState<boolean>(false);
@@ -17,25 +18,8 @@ export function PostComponent({ post }) {
   const { user } = useUserContext();
   const { createComment } = usePostsContext();
 
-  const [commentList, setCommentList] = useState<Comments[]>([]);
   const [commentText, setcommentText] = useState("");
   const [commentIsOpen, setCommentIsOpen] = useState(Boolean);
-
-  async function getComments(postId: String) {
-    try {
-      const response = await fetch(`/api/comment/${postId}`, {
-        method: "GET",
-      });
-      const result = await response.json();
-      setCommentList(result);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  useEffect(() => {
-    getComments(post.id);
-  }, []);
 
   return (
     <CardComponent>
@@ -48,15 +32,19 @@ export function PostComponent({ post }) {
         <div className="w-full">
           <div className="flex justify-between items-center ">
             <p className="font-semibold text-md">{post?.user?.username}</p>
-            <EditButtonComponent
-              post={post}
+            <MenuButtonComponent
+              type="post"
               openTextAreaModal={setTextAreaIsOpen}
+              post={post}
             />
           </div>
+          <div onTouchMoveCapture={() => console.log("jorge")}>
+            <p className="text-7xl text-red-900 font bold">Passou</p>
+          </div>
           <p className="font-semibold text-[11px] text-gray-400">{`Posted at ${moment(
-            post.created_at
+            post?.created_at
           ).format("MMMM Do YYYY, h:mm a")}`}</p>
-          {post.book_id ? (
+          {post?.book_id ? (
             <div>
               <div className="mt-3 flex space-x-3">
                 {post?.book?.smallThumbnail ? (
@@ -88,24 +76,30 @@ export function PostComponent({ post }) {
                     </p>
                   </div>
                   <EditComponent
+                    type={"post"}
                     post={post}
                     textAreaIsOpen={textAreaIsOpen}
-                    onClick={() => setTextAreaIsOpen(false)}
+                    setTextAreaIsOpen={setTextAreaIsOpen}
                   />
                 </div>
               </div>
             </div>
           ) : (
             <EditComponent
+              type={"post"}
               post={post}
               textAreaIsOpen={textAreaIsOpen}
-              onClick={() => setTextAreaIsOpen(false)}
+              setTextAreaIsOpen={setTextAreaIsOpen}
             />
           )}
           <div className="flex justify-start items-center w-[100%] my-1">
             <div className="flex justify-center items-center space-x-2 w-[140px]">
               <LikeComponent post={post} />
-              <CommentComponent post={post} />
+              <IconCommentComponent
+                post={post}
+                setComment={setCommentIsOpen}
+                commentIsOpen={commentIsOpen}
+              />
             </div>
             <form
               className="flex flex-1 bg-bg-gray py-2 px-1 rounded-lg"
@@ -131,35 +125,7 @@ export function PostComponent({ post }) {
           </div>
         </div>
       </div>
-      <div>
-        {commentList?.map((comment: Comments) => {
-          return (
-            <>
-              <div
-                key={comment?.id}
-                className={`ml-[75px] flex space-x-2 my-2`}
-              >
-                <img
-                  src={comment?.user?.image}
-                  alt="avatar"
-                  className="h-12 w-12 rounded-full"
-                />
-                <div className="w-[100%]">
-                  <div className="flex justify-between items-center">
-                    <p className="font-semibold text-md">
-                      {comment?.user.username}
-                    </p>
-                    <EditButtonComponent comment={comment} />
-                  </div>
-                  <p className="bg-green-200 py-2 px-4 rounded-b-md rounded-tr-md w-[100%] mt-2">
-                    {comment?.text}
-                  </p>
-                </div>
-              </div>
-            </>
-          );
-        })}
-      </div>
+      {commentIsOpen ? <CommentComponent post={post} /> : null}
     </CardComponent>
   );
 }

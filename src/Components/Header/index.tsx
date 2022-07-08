@@ -26,6 +26,8 @@ export default function HeaderComponent() {
   useEffect(() => {
     if (!session) {
       setTimeout(() => setLoadingData(false), 1500);
+    } else {
+      setLoadingData(!loadingData);
     }
   }, []);
 

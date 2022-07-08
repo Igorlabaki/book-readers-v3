@@ -45,4 +45,34 @@ export default async function Comment(req: NextApiRequest, resp: NextApiResponse
     }
   }
 
+  if (req.method === "DELETE") {
+    const commentId = JSON.parse(req.body)
+    try {
+        const commentDeleted = await prisma.comments.delete({
+          where:{
+              id: commentId,
+          }
+      });
+      return resp.status(200).json(commentDeleted)
+    } catch (error) {
+      return resp.json({ message: error.message })
+    }
+  }
+
+  if(req.method === 'PUT'){
+    const commentInfo = JSON.parse(req.body)
+    try {
+        const post = await prisma.comments.update({
+           where:{
+            id: commentInfo.id
+           },
+           data:{
+            text: commentInfo.text
+           }
+        })
+        return resp.status(200).json(post)
+    } catch (error) {
+        return resp.json({ message: error.message})
+    }
+}
 }

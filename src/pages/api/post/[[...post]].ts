@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from '../../../lib/prisma'
+import { prisma } from '../../../../lib/prisma'
 
 export default async function Post(req:NextApiRequest,resp: NextApiResponse){
     
@@ -72,8 +72,17 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
                 include:{
                     user: true,
                     book: true,
-                    Comments: true,
-                    Likes: true
+                    Comments: {
+                        include:{
+                            user: true
+                        }
+                    },
+                    Likes: {
+                        include:{
+                            user: true,
+                            post: true,
+                        }
+                    }
                 },
                 orderBy:{
                     created_at: 'desc',
@@ -104,10 +113,11 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
 
     if(req.method === 'DELETE'){
         const postInfo = JSON.parse(req.body)
+
         try {
             const post = await prisma.posts.delete({
                where:{
-                id: postInfo.id
+                id: postInfo
                }
             })
             return resp.status(200).json(post)

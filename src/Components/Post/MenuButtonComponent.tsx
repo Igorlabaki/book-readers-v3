@@ -12,15 +12,17 @@ interface EditProps {
   post?: Posts;
   comment?: Comments;
   openTextAreaModal?: any;
+  type: string;
 }
 
-export function EditButtonComponent({
+export function MenuButtonComponent({
   post,
   openTextAreaModal,
   comment,
+  type,
 }: EditProps) {
   const { user } = useUserContext();
-  const { deletePost, updatePost } = usePostsContext();
+  const { deletePost, deleteComment } = usePostsContext();
 
   const [modal, setModal] = useState(false);
 
@@ -45,15 +47,19 @@ export function EditButtonComponent({
             icon={<MdOutlineModeEditOutline size={19} />}
             className="hover:bg-secundary flex space-x-2 justify-start items-center w-[100%] py-2 px-5"
             onClick={() => {
-              handleCloseModal();
               openTextAreaModal(true);
+              handleCloseModal();
             }}
           />
           <Button
             title="Delete"
             icon={<BsTrash />}
             className="hover:bg-secundary flex space-x-2 justify-start items-center w-[100%] py-2 px-5"
-            onClick={() => deletePost(post)}
+            onClick={
+              type.includes("post")
+                ? () => deletePost(post.id)
+                : () => deleteComment(comment?.id)
+            }
           />
         </ModalDropDownMenu>
       ) : null}

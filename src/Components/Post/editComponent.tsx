@@ -1,65 +1,94 @@
-import { Posts } from "@prisma/client";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import { Comments, Posts } from "@prisma/client";
+import React, { useEffect, useRef, useState } from "react";
 import usePostsContext from "../../Hooks/usePostsContext";
+import useUserContext from "../../Hooks/useUserContext";
 import { Button } from "../util/Button";
 
 interface editComponentProps {
   post?: Posts;
-  textAreaIsOpen?: boolean;
-  onClick?: React.Dispatch<React.SetStateAction<boolean>>;
+  comment?: Comments;
+  textAreaIsOpen: boolean;
+  setTextAreaIsOpen: any;
+  type: String;
 }
 
-export default function EditComponent({
+export function EditComponent({
   post,
+  type,
+  comment,
   textAreaIsOpen,
-  onClick,
+  setTextAreaIsOpen,
 }: editComponentProps) {
-  const [textInput, setTextInput] = useState(post?.text);
-  const { updatePost } = usePostsContext();
+  const { updatePost, updateComment } = usePostsContext();
+  const { user } = useUserContext();
+
+  const postType = type.includes("post");
+  const [textInput, setTextInput] = useState(
+    postType ? post?.text : comment?.text
+  );
+  const wrapperRef = useRef(null);
+
+  function useOutsideAlerter(ref) {
+    useEffect(() => {
+      /**
+       * Alert if clicked on outside of element
+       */
+      function handleClickOutside(event) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setTextAreaIsOpen(!textAreaIsOpen);
+        }
+      }
+      // Bind the event listener
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        // Unbind the event listener on clean up
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [ref]);
+  }
+
+  useOutsideAlerter(wrapperRef);
 
   return (
     <>
       {textAreaIsOpen ? (
-        <>
-          <div className="w-full mt-2 bg-white rounded-b-lg rounded-tr-lg">
-            <textarea
-              placeholder={post?.text}
+        <div className="flex  w-[100%] space-x-1">
+          <form
+            className={`flex w-full bg-white rounded-b-lg rounded-tr-lg`}
+            onSubmit={(e) => {
+              e.preventDefault();
+              postType
+                ? updatePost(post, textInput)
+                : updateComment(comment, textInput);
+              setTextInput("");
+            }}
+            ref={wrapperRef}
+          >
+            <input
+              placeholder={postType ? post?.text : comment?.text}
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
               className="w-full rounded-lg px-3 py-2
               bg-bg-gray
               outline-none resize-none"
             />
-          </div>
-          <div
-            className={`flex gap-x-1 mt-[1px] ${
-              post.book_id ? "flex-col gap-y-1" : ""
-            }`}
-          >
-            <Button
-              title="Update"
-              onClick={() => {
-                updatePost(post, textInput, "text");
-                onClick(false);
-              }}
-              disabled={textInput === post?.text || !textInput ? true : false}
-              className={`${
-                textInput === post?.text || !textInput
-                  ? "bg-[#BBBFC1]"
-                  : "bg-blue-900"
-              }  w-[80px] font-semibold text-white flex justify-center items-center rounded-md py-1 hover:brightness-110`}
-            />
-            <Button
-              onClick={() => onClick(false)}
-              title="Cancel"
-              className="bg-red-300 w-[80px] font-semibold text-white flex justify-center 
-              items-center rounded-md py-1 hover:bg-red-500"
-            />
-          </div>
-        </>
+          </form>
+          <Button
+            onClick={() => {
+              setTextAreaIsOpen(!textAreaIsOpen);
+            }}
+            title="Cancel"
+            className="bg-red-300 w-[80px] h-10 font-semibold text-white flex justify-center 
+              items-center rounded-md hover:bg-red-500"
+          />
+        </div>
       ) : (
-        <div className="w-[100%] mt-2 bg-secundary py-2 px-4 rounded-b-md rounded-tr-md">
-          <p>{post?.text}</p>
+        <div
+          className={`w-[100%] mt-2 ${
+            postType ? "bg-secundary" : "bg-green-200"
+          }  py-2 px-4 rounded-b-md rounded-tr-md`}
+        >
+          <p>{postType ? post?.text : comment?.text}</p>
         </div>
       )}
     </>

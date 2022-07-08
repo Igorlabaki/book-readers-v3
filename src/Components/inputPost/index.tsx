@@ -44,27 +44,36 @@ export function InputPostComponent({ post }: InputProps) {
   return (
     <>
       <CardComponent>
-        <textarea
-          placeholder={phrases[index]}
-          value={error ? error : textInput}
-          onChange={(e) => setTextInput(e.target.value)}
-          className={`w-full rounded-lg px-5 py-5 
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            createPost(postInput);
+            pickRamdomPhrase(0, phrases.length);
+            setTextInput("");
+          }}
+        >
+          <input
+            placeholder={phrases[index]}
+            value={error ? error : textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+            className={`w-full rounded-lg px-5 py-5 
           bg-bg-gray
           outline-none mt-5 resize-none`}
-        />
-        <div className="flex w-[100%] justify-end items-center">
-          <Button
-            title="Post"
-            onClick={(e) => {
-              e.preventDefault();
-              {
-                !textInput ? null : createPost(postInput);
-              }
-              setTextInput("");
-            }}
-            className="bg-blue-900 py-2 px-4  hover:brightness-[1.15] text-white rounded-lg mt-2 w-[20%]"
           />
-        </div>
+          <div className="flex w-[100%] justify-end items-center">
+            <Button
+              title="Post"
+              onClick={(e) => {
+                e.preventDefault();
+                {
+                  !textInput ? null : createPost(postInput);
+                }
+                setTextInput("");
+              }}
+              className="bg-blue-900 py-2 px-4  hover:brightness-[1.15] text-white rounded-lg mt-2 w-[20%]"
+            />
+          </div>
+        </form>
       </CardComponent>
     </>
   );
