@@ -64,8 +64,8 @@ export function ListTypeBook({ type, list }: listTypeBookProps) {
           ) : (
             <div className="flex space-x-3 overflow-hidden scroll-auto">
               {list
-                .filter((item) => item?.book?.title.includes(search))
-                .map((item) => {
+                .filter((item: any) => item?.book?.title.includes(search))
+                .map((item: any) => {
                   return (
                     <>
                       {item?.book?.smallThumbnail ? (
@@ -84,7 +84,7 @@ export function ListTypeBook({ type, list }: listTypeBookProps) {
                           alt=""
                           className="w-[130px] h-[180] shadow-pattern rounded-md cursor-pointer"
                           onClick={() => {
-                            router.push(`/search/id/${post.book.google}`);
+                            router.push(`/search/id/${item?.book.google}`);
                           }}
                         />
                       )}

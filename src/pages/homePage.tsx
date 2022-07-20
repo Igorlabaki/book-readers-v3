@@ -78,7 +78,7 @@ export default function HomePage({ data }) {
           </div>
           <div className="flex space-x-2 justify-start items-center overflow-hidden">
             {listType.includes("Most Read")
-              ? mostReadList?.map((book, i) => {
+              ? mostReadList?.map((book: any, i) => {
                   return (
                     <>
                       <div
@@ -114,7 +114,7 @@ export default function HomePage({ data }) {
                   );
                 })
               : listType.includes("Most Posts")
-              ? mostPostsList?.map((book, i) => {
+              ? mostPostsList?.map((book: any, i) => {
                   if (book.Posts.length === 0) {
                     return;
                   }

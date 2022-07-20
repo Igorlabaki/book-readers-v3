@@ -5,7 +5,7 @@ import { EditComponent } from "./editComponent";
 import { MenuButtonComponent } from "./MenuButtonComponent";
 
 interface PropsInterface {
-  post?: Posts;
+  post?: any;
 }
 
 export function CommentComponent({ post }: PropsInterface) {
@@ -13,7 +13,7 @@ export function CommentComponent({ post }: PropsInterface) {
   const router = useRouter();
   return (
     <>
-      {post?.Comments?.map((comment: Comments) => {
+      {post?.Comments?.map((comment: any) => {
         return (
           <>
             <div key={comment?.id} className={`ml-[75px] flex space-x-2 my-2`}>

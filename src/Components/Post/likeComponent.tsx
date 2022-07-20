@@ -33,7 +33,7 @@ export function LikeComponent({ post }: likeProps) {
           {likeModal ? (
             <>
               <div className="bg-black opacity-50 absolute top-[1.75rem] left-1 rounded-md p-2">
-                {post?.Likes?.map((like: Likes) => {
+                {post?.Likes?.map((like: any) => {
                   return (
                     <>
                       <p key={like.id} className={`text-white text-sm`}>

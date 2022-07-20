@@ -29,7 +29,7 @@ export default function Profile() {
   const [followButton, setfollowButton] = useState("Follow");
 
   useEffect(() => {
-    getProfile(id);
+    getProfile(id.toString());
   }, []);
 
   const router = useRouter();
@@ -169,7 +169,7 @@ export default function Profile() {
             <div className="flex justify-start items-center space-x-3">
               {profile?.followedBy.length === 0 ? (
                 <p className="w-[100%] text-center text-lg text-gray-400">
-                  {profile?.username} doesn't have any followers{" "}
+                  {profile?.username} doesnt have any followers{" "}
                 </p>
               ) : (
                 profile?.followedBy?.map((follow, i) => {

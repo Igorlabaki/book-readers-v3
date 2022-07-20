@@ -5,7 +5,7 @@ export default async function getUser(req:NextApiRequest,resp: NextApiResponse){
 
 const { id } = req.query
 
-const teste = id
+const teste = id.toString()
 
  try {
 
