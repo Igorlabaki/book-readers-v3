@@ -4,14 +4,13 @@ import HeaderComponent from "../../Components/Header";
 import useUserContext from "../../Hooks/useUserContext";
 import { ImBooks } from "react-icons/im";
 import { BsFillChatSquareFill } from "react-icons/bs";
-import { FaUserFriends } from "react-icons/Fa";
+import { FaUsers } from "react-icons/Fa";
 import { Button } from "../../Components/util/Button";
 import { CardComponent } from "../../Components/util/Card";
-import { Books, Follows, Posts } from "@prisma/client";
+import { Posts } from "@prisma/client";
 import { PostComponent } from "../../Components/Post";
 import { ListTypeBook } from "../../Components/Profile/listTypeBook";
 import useFollowContext from "../../Hooks/useFollowContext";
-import { AiOutlineConsoleSql } from "react-icons/ai";
 
 export default function Profile() {
   const {
@@ -109,7 +108,7 @@ export default function Profile() {
           <Button
             title={profile?.followedBy?.length}
             icon={
-              <FaUserFriends
+              <FaUsers
                 size={24}
                 className={
                   friendList ? "text-blue-800 scale-125" : "text-gray-300"
