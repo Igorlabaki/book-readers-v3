@@ -59,7 +59,7 @@ export default function Home() {
         <Image
           src={"/images/logo/logo-white.png"}
           alt="Logo Book Readers"
-          width={300}
+          width={200}
           height={100}
         />
         <Button
@@ -69,11 +69,11 @@ export default function Home() {
         />
       </header>
       <main className="flex-1 flex flex-col justify-center items-center text-white">
-        <h1 className="text-5xl font-bold">Welcome to the BookReaders</h1>
-        <h2 className="text-2xl">
+        <h1 className="text-4xl font-bold">Welcome to the BookReaders</h1>
+        <h2 className="text-lg">
           A social network made for those who love to read
         </h2>
-        <div className="mt-[15px] text-2xl text-center">
+        <div className="mt-[15px] text-lg text-center">
           <p>
             This project was developed in Next.Js, NextAuth, React, Typescript,
             Prisma, Pscale and Tailwind
@@ -86,7 +86,7 @@ export default function Home() {
       </main>
       <footer>
         <div className="w-[20%] flex flex-col">
-          <div className="flex gap-7">
+          <div className="flex gap-2">
             <Link
               alt="github-icon"
               img="/images/brand-icons/github.png"
@@ -103,7 +103,9 @@ export default function Home() {
               url="https://www.linkedin.com/in/igor-augusto-labaki-goncalo-b75918199/"
             />
           </div>
-          <p className="text-white text-lg">Coded by Igor Gonçalo</p>
+          <p className="text-white text-lg text-center">
+            Coded by Igor Gonçalo
+          </p>
         </div>
       </footer>
       {modal ? (
@@ -140,7 +142,7 @@ export default function Home() {
               </div>
               <div className="mb-3">
                 <div className="flex space-x-1">
-                  <p className="text-[13px]  font-semibold text-blue-900">
+                  <p className="text-[13px]  font-semibold text-black">
                     Are you new here?
                   </p>
                   <Button

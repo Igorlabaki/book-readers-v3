@@ -30,6 +30,8 @@ export const authOptions = {
         posts:     user.posts || [],    
         comments:  user.comments || [],   
         likes:     user.likes || [],   
+        follower:     user.follower || [],   
+        following:     user.following || [],   
       }
     })
   }

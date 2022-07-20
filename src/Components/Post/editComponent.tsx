@@ -76,13 +76,14 @@ export function EditComponent({
           <Button
             onClick={() => {
               setTextAreaIsOpen(!textAreaIsOpen);
+              setTextInput(() => post.text);
             }}
             title="Cancel"
             className="bg-red-300 w-[80px] h-10 font-semibold text-white flex justify-center 
               items-center rounded-md hover:bg-red-500"
           />
         </div>
-      ) : (
+      ) : post?.text || comment?.text ? (
         <div
           className={`w-[100%] mt-2 ${
             postType ? "bg-secundary" : "bg-green-200"
@@ -90,7 +91,7 @@ export function EditComponent({
         >
           <p>{postType ? post?.text : comment?.text}</p>
         </div>
-      )}
+      ) : null}
     </>
   );
 }

@@ -13,7 +13,7 @@ export function LoadingListComponent() {
           <div className="w-full py-2">
             <div className="flex justify-between items-center ">
               <div className="bg-gray-300 w-[50%] h-6 " />
-              <Button icon={<BiBookAdd size={19} />} />
+              <div className="bg-gray-300 w-[20%] h-6 " />
             </div>
             <div className="mt-3 flex space-x-3">
               <div className="w-[100%] space-y-4">
@@ -41,7 +41,7 @@ export function LoadingListComponent() {
           <div className="w-full py-2">
             <div className="flex justify-between items-center ">
               <div className="bg-gray-300 w-[50%] h-6 " />
-              <Button icon={<BiBookAdd size={19} />} />
+              <div className="bg-gray-300 w-[20%] h-6 " />
             </div>
             <div className="mt-3 flex space-x-3">
               <div className="w-[100%] space-y-4">
@@ -69,7 +69,7 @@ export function LoadingListComponent() {
           <div className="w-full py-2">
             <div className="flex justify-between items-center ">
               <div className="bg-gray-300 w-[50%] h-6 " />
-              <Button icon={<BiBookAdd size={19} />} />
+              <div className="bg-gray-300 w-[20%] h-6 " />
             </div>
             <div className="mt-3 flex space-x-3">
               <div className="w-[100%] space-y-4">
@@ -97,7 +97,7 @@ export function LoadingListComponent() {
           <div className="w-full py-2">
             <div className="flex justify-between items-center ">
               <div className="bg-gray-300 w-[50%] h-6 " />
-              <Button icon={<BiBookAdd size={19} />} />
+              <div className="bg-gray-300 w-[20%] h-6 " />
             </div>
             <div className="mt-3 flex space-x-3">
               <div className="w-[100%] space-y-4">

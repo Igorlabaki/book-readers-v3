@@ -14,9 +14,42 @@ const teste = id
         id: teste
     },
     include:{
-      Books: true,
+      Books: {
+        include:{
+          book: true
+        }
+      },
+      followedBy:{
+        include:{
+          follower: true,
+        }
+      },
+      following:{
+        include:{
+          following: true
+        }
+      },
       Likes: true,
-      Posts:true
+      Posts:{
+        include:{
+          Comments:{
+            include:{
+              user: true
+            },
+          },
+          book: true,
+          Likes:{
+            include:{
+              user: true
+            }
+          },
+          user: {
+            include:{
+              Books: true
+            }
+          }
+        }
+      },
     }
   });
 

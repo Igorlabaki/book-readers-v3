@@ -37,9 +37,10 @@ interface PostsContext {
   allPosts?: Posts[];
 
   createBookPost?: (
-    postText: string,
     bookInputId: String,
-    userInputId: String
+    userInputId: String,
+    listType: string,
+    postText?: string
   ) => void;
 
   currentPostPage?: number;
@@ -82,7 +83,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error.message);
     }
-    setTimeout(() => setIsLoading(false), 3000);
+    setTimeout(() => setIsLoading(false), 1500);
   }
 
   async function deletePost(postId: String) {
@@ -97,7 +98,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error);
     }
-    setTimeout(() => setIsLoading(false), 2000);
+    setTimeout(() => setIsLoading(false), 1500);
   }
 
   async function updatePost(postInput: Posts, text: String) {
@@ -116,7 +117,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error);
     }
-    setTimeout(() => setIsLoading(false), 2000);
+    setTimeout(() => setIsLoading(false), 1500);
   }
 
   async function getPosts() {
@@ -132,32 +133,30 @@ export function PostsContextProvider({ children }: ContextProvider) {
   async function createBookPost(
     bookInputId: String,
     userInputId: String,
-    postText: string
+    listType: string,
+    postText?: string
   ) {
     setIsLoading(true);
-    if (postText != "") {
-      const postBookInput = {
-        bookId: bookInputId,
-        userId: userInputId,
-        postText: postText,
-      };
-      try {
-        await fetch("/api/post", {
-          method: "POST",
-          body: JSON.stringify(postBookInput),
-        });
-        getPosts();
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      showError("", 3000);
+    const postBookInput = {
+      bookId: bookInputId,
+      userId: userInputId,
+      listType: listType,
+      postText: postText,
+    };
+    try {
+      await fetch("/api/post", {
+        method: "POST",
+        body: JSON.stringify(postBookInput),
+      });
+      getPosts();
+    } catch (error) {
+      console.log("aqui");
     }
+
     setTimeout(() => setIsLoading(false), 2000);
   }
 
   async function createLike(post: Posts, userId: String) {
-    setisLikeLoading(true);
     const inputLike = {
       idP: post.id,
       idU: userId,
@@ -173,7 +172,6 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error);
     }
-    setTimeout(() => setisLikeLoading(false), 2000);
   }
 
   async function getLike(postId: String, userId: String) {

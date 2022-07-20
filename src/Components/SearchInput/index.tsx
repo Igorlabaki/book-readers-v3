@@ -24,7 +24,7 @@ export function SearchInput() {
   useEffect(() => {
     try {
       if (search != "") {
-        getBooks(search, "5");
+        getBooks(search);
       }
     } catch (error) {
       setError("Sorry we didnt find any book");
@@ -43,43 +43,49 @@ export function SearchInput() {
     if (booksSearch && search != "") {
       return (
         <>
-          {booksSearch.map((book, i) => (
-            <>
-              <div
-                className="flex hover:bg-blue-200 w-full cursor-pointer py-3"
-                key={book.id}
-                onClick={() => {
-                  router.push(`/search/id/${book.id}`);
-                  setSearch("");
-                }}
-              >
-                <div className="flex justify-center items-center">
-                  {book.volumeInfo.imageLinks ? (
-                    <img
-                      src={book.volumeInfo.imageLinks?.thumbnail}
-                      alt=""
-                      className="h-[80px] w-[70px] ml-1"
-                    />
-                  ) : (
-                    <img
-                      src="/images/photos/book-default.jpg"
-                      alt=""
-                      className="h-[90px] ml-1"
-                    />
-                  )}
+          {booksSearch.map((book, i) => {
+            if (i >= 5) {
+              return;
+            }
+            return (
+              <>
+                <div
+                  className="flex hover:bg-blue-200 w-full 
+                cursor-pointer py-3"
+                  key={book.id}
+                  onClick={() => {
+                    router.push(`/search/id/${book.id}`);
+                    setSearch("");
+                  }}
+                >
+                  <div className="flex justify-center items-center">
+                    {book.volumeInfo.imageLinks ? (
+                      <img
+                        src={book.volumeInfo.imageLinks?.thumbnail}
+                        alt=""
+                        className="h-[100px] w-[80px] rounded-md  ml-1"
+                      />
+                    ) : (
+                      <img
+                        src="/images/photos/book-default.jpg"
+                        alt=""
+                        className="h-[100px] w-[80px] rounded-md  ml-1"
+                      />
+                    )}
+                  </div>
+                  <div className="p-5">
+                    <p className="text-md font-semibold">
+                      {book.volumeInfo.title}
+                    </p>
+                    <h4 className="text-sm italic font-light">
+                      by {book.volumeInfo?.authors?.at(0)}
+                    </h4>
+                  </div>
                 </div>
-                <div className="p-5">
-                  <p className="text-md font-semibold">
-                    {book.volumeInfo.title}
-                  </p>
-                  <h4 className="text-sm">
-                    by {book.volumeInfo?.authors?.at(0)}
-                  </h4>
-                </div>
-              </div>
-              <hr className="text-black w-[50%] m-auto border-1" />
-            </>
-          ))}
+                <hr className="text-black w-[50%] m-auto border-1" />
+              </>
+            );
+          })}
           <Button
             title="Se all"
             className="flex justify-center items-center text-primary w-full text-[1rem] py-2 hover:bg-blue-200 overflow-hidden"
@@ -101,10 +107,14 @@ export function SearchInput() {
 
   return (
     <form
-      action={`/search/list/${search}`}
+      action="GET"
+      onSubmit={(e) => {
+        e.preventDefault();
+        router.push(`/search/list/${search}`);
+      }}
       className="flex-1 flex  justify-center items-center"
     >
-      <div className="w-[80%] flex h-10 relative  bg-bg-gray rounded-t-lg">
+      <div className={`w-[80%] flex h-10 relative bg-bg-gray rounded-t-lg`}>
         <Button
           title=""
           type="submit"

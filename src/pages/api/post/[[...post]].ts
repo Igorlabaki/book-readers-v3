@@ -6,21 +6,21 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
 
     if(req.method === 'POST'){
         const postInfo = JSON.parse(req.body)
-
         if(postInfo.bookId){
             try {
                 const savedBookUser = await prisma.userBooks.create({
                     data: {
-                    book:{
-                        connect:{
-                        id: postInfo.bookId
-                        }
-                    },
-                    user:{
-                        connect:{
-                        id: postInfo.userId
-                        }
-                    }
+                        book:{
+                            connect:{
+                            id: postInfo.bookId
+                            }
+                        },
+                        user:{
+                            connect:{
+                            id: postInfo.userId
+                            }
+                        },
+                        listType: postInfo.listType
                     },
                 });
                 const savedPost = await prisma.posts.create({
@@ -70,7 +70,11 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
         try {
             const post = await prisma.posts.findMany({
                 include:{
-                    user: true,
+                    user: {
+                        include: {
+                            Books: true
+                        }
+                    },
                     book: true,
                     Comments: {
                         include:{
@@ -85,7 +89,7 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
                     }
                 },
                 orderBy:{
-                    created_at: 'desc',
+                    updatedAt: 'desc'
                 }
             })
             return resp.status(200).json(post)
@@ -124,6 +128,7 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
         } catch (error) {
             return resp.json({ message: error.message})
         }
+
     }
 
 

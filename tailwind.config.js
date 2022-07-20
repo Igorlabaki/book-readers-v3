@@ -8,7 +8,7 @@ module.exports = {
       }),
       boxShadow: {
         'pattern': '0px 4px 15px -7px #000000',
-        'pattern2': '0px 1px 4px 1px #8F8F8F',
+        'pattern2': '3px 11px 15px -1px #000000',
       },
       colors: {
         'primary': 'rgba(29, 53, 87)',

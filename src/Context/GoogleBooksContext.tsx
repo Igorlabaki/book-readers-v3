@@ -30,7 +30,7 @@ interface GoogleBookContext {
   book?: book;
   getBook?: (bookSearch: any) => void;
 
-  getBooks?: (bookSearch: any, maxResult?: string) => void;
+  getBooks?: (bookSearch: any, maxResult?: any) => void;
   booksSearch?: book[];
 
   authorsBooksList?: book[];
@@ -49,7 +49,7 @@ export function GoogleBookContextProvider({
 
   const [authorsBooksList, setAuthorBooksList] = useState<book[]>([]);
 
-  async function getBooks(bookSearch: any, maxResults: string) {
+  async function getBooks(bookSearch: any, maxResults: any) {
     const resp = await axios
       .get(
         `https://www.googleapis.com/books/v1/volumes/?q=${bookSearch}&key=AIzaSyCQPpX0QFUTs45EhUe1Ou5FNjEAjjvtYRQ&maxResults=${
@@ -57,7 +57,7 @@ export function GoogleBookContextProvider({
         }`
       )
       .then((resp) => resp.data.items);
-    setBooksSearch(resp);
+    setBooksSearch(() => resp);
   }
 
   async function getBook(id: any) {

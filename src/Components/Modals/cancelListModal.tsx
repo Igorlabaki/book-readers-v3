@@ -5,7 +5,7 @@ interface propsNewModal {
   children: ReactNode;
 }
 
-export function AddBookModalComponent({ onClose, children }: propsNewModal) {
+export function CancelListModal({ onClose, children }: propsNewModal) {
   const handleOutsideClick = (e: any) => {
     if (e.target.id) onClose();
   };

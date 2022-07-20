@@ -32,11 +32,11 @@ export default function HeaderComponent() {
   }, []);
 
   return (
-    <header className="flex justify-between w-full px-4 m-auto fixed top-0 bg-white shadow-pattern">
+    <header className="flex justify-between w-full px-4 py-2 m-auto fixed top-0 z-30 bg-white shadow-pattern">
       <Image
         src={"/images/logo/logo-color.png"}
-        width={180}
-        height={80}
+        width={150}
+        height={55}
         alt="logo"
         className="cursor-pointer"
         onClick={() => router.push("/homePage")}
