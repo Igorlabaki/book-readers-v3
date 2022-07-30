@@ -1,4 +1,3 @@
-import { Likes } from "@prisma/client";
 import React, { memo, useState } from "react";
 import { AiFillLike } from "react-icons/ai";
 import usePostsContext from "../../Hooks/usePostsContext";

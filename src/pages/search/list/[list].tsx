@@ -87,13 +87,8 @@ export default function SearchListComponent() {
     setLoadingPage(true);
     getBooks(list);
     setTotalElements(() => booksSearch.length);
-<<<<<<< HEAD
     setTimeout(() => setLoadingPage(false), 1000);
   }, [router.asPath, user?.Books]);
-=======
-    setTimeout(() => setLoadingPage(false), 2500);
-  }, [router.asPath]);
->>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
 
   return (
     <div className="w-[100%] bg-bg-gray py-24 space-y-3">

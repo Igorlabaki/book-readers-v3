@@ -115,15 +115,11 @@ export function SearchInput() {
       }}
       className="flex-1 flex  justify-center items-center"
     >
-<<<<<<< HEAD
       <div
         className={`w-[80%] flex h-10 relative bg-bg-gray rounded-t-lg ${
           search ? "" : "rounded-br-lg"
         }`}
       >
-=======
-      <div className={`w-[80%] flex h-10 relative bg-bg-gray rounded-t-lg`}>
->>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
         <Button
           title=""
           type="submit"

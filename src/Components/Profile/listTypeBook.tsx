@@ -55,19 +55,7 @@ export function ListTypeBook({ type, list }: listTypeBookProps) {
         <div className="mt-5">
           {loadingProfile ? (
             <div className="flex space-x-3">
-<<<<<<< HEAD
               <div className="h-[150px] w-[105px] bg-gray-300 rounded-lg shadow-pattern animate-pulse" />
-              <div className="h-[150px] w-[105px] bg-gray-300 rounded-lg shadow-pattern animate-pulse" />
-              <div className="h-[150px] w-[105px] bg-gray-300 rounded-lg shadow-pattern animate-pulse" />
-              <div className="h-[150px] w-[105px] bg-gray-300 rounded-lg shadow-pattern animate-pulse" />
-              <div className="h-[150px] w-[105px] bg-gray-300 rounded-lg shadow-pattern animate-pulse" />
-=======
-              <div className="h-[220px] w-[135px] bg-gray-300 rounded-lg shadow-pattern animate-pulse" />
-              <div className="h-[220px] w-[135px] bg-gray-300 rounded-lg shadow-pattern animate-pulse" />
-              <div className="h-[220px] w-[135px] bg-gray-300 rounded-lg shadow-pattern animate-pulse" />
-              <div className="h-[220px] w-[135px] bg-gray-300 rounded-lg shadow-pattern animate-pulse" />
-              <div className="h-[220px] w-[135px] bg-gray-300 rounded-lg shadow-pattern animate-pulse" />
->>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
             </div>
           ) : (
             <div className="flex space-x-3 overflow-hidden scroll-auto">
@@ -80,11 +68,7 @@ export function ListTypeBook({ type, list }: listTypeBookProps) {
                         <img
                           src={item?.book?.smallThumbnail}
                           alt=""
-<<<<<<< HEAD
                           className="h-[150px] w-[105px] bg-gray-300 rounded-lg shadow-pattern cursor-pointer"
-=======
-                          className="h-[220px] w-[135px] bg-gray-300 rounded-lg shadow-pattern cursor-pointer"
->>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
                           key={item?.book?.id}
                           onClick={() => {
                             router.push(`/search/id/${item?.book?.google}`);
@@ -96,11 +80,7 @@ export function ListTypeBook({ type, list }: listTypeBookProps) {
                           alt=""
                           className="w-[130px] h-[180] shadow-pattern rounded-md cursor-pointer"
                           onClick={() => {
-<<<<<<< HEAD
                             router.push(`/search/id/${item.book.google}`);
-=======
-                            router.push(`/search/id/${item?.book.google}`);
->>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
                           }}
                         />
                       )}

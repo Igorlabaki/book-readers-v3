@@ -1,18 +1,7 @@
 import { useRouter } from "next/router";
-<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
-=======
-import React, { useState } from "react";
->>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
-import { BsStar } from "react-icons/bs";
-import { GrFormClose } from "react-icons/gr";
-import { BookContext } from "../../Context/BooksContext";
 import useBookContext from "../../Hooks/useBookContext";
-<<<<<<< HEAD
 import useUserBookContext from "../../Hooks/useUserBookContext";
-=======
-import useUserBookContext from "../../Hooks/useBookContext copy";
->>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
 import useGoogleBooksContext from "../../Hooks/useGoogleBooksContext";
 import usePostsContext from "../../Hooks/usePostsContext";
 import useUserContext from "../../Hooks/useUserContext";
@@ -24,20 +13,14 @@ interface Props {
   lisOpenIsOpen: boolean;
   setlistOptionsClose: () => any;
   handleOpenAddBookModal: () => any;
-<<<<<<< HEAD
   handleCloseCancelListModal: () => any;
-=======
->>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
 }
 
 export function ListOptions({
   lisOpenIsOpen,
   setlistOptionsClose,
   handleOpenAddBookModal,
-<<<<<<< HEAD
   handleCloseCancelListModal,
-=======
->>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
 }: Props) {
   const { user } = useUserContext();
   const { bookBd, createBook } = useBookContext();
@@ -47,11 +30,8 @@ export function ListOptions({
 
   const router = useRouter();
 
-<<<<<<< HEAD
   useEffect(() => {}, []);
 
-=======
->>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
   function handleUpdate(e, selectValue) {
     e.preventDefault();
     if (
@@ -84,10 +64,7 @@ export function ListOptions({
               <p
                 className="cursor-pointer pl-2 hover:bg-secundary"
                 onClick={(e) => {
-<<<<<<< HEAD
                   handleCloseCancelListModal();
-=======
->>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
                   handleUpdate(e, "Currently Reading");
                 }}
               >
@@ -96,18 +73,11 @@ export function ListOptions({
               <p
                 className="cursor-pointer pl-2 hover:bg-secundary"
                 onClick={(e) => {
-<<<<<<< HEAD
                   handleCloseCancelListModal();
                   handleUpdate(e, "Want to Read");
                 }}
               >
                 Want to Read
-=======
-                  handleUpdate(e, "Want to Read");
-                }}
-              >
-                Wanto to Read
->>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
               </p>
             </div>
           </div>

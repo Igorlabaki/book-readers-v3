@@ -1,10 +1,6 @@
 import { Comments, Posts } from "@prisma/client";
 import { useRouter } from "next/router";
-<<<<<<< HEAD
 import React, { memo, useEffect, useState } from "react";
-=======
-import { useEffect, useState } from "react";
->>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
 import { EditComponent } from "./editComponent";
 import { MenuButtonComponent } from "./MenuButtonComponent";
 
@@ -24,11 +20,7 @@ export function CommentComponent({ post }: PropsInterface) {
               <img
                 src={comment?.user?.image}
                 alt="avatar"
-<<<<<<< HEAD
                 className="h-9 w-9 rounded-full cursor-pointer"
-=======
-                className="h-12 w-12 rounded-full cursor-pointer"
->>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
                 onClick={() => {
                   router.push(`/profile/${comment?.user?.id}`);
                 }}
