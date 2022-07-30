@@ -27,12 +27,12 @@ export  default async function  Like(req:NextApiRequest,resp: NextApiResponse){
           like: true,
           post:{
             connect:{
-              id: postInfo.idP
+              id: postInfo.id
             }
           },
           user:{
             connect:{
-              id: postInfo.idU
+              id: postInfo.user_id
             }
           }
         }

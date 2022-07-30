@@ -29,13 +29,17 @@ interface book {
 }
 
 interface BookContext {
-  book?: any;
+  bookBd?: any;
+  getBookBd?: (googleId: string) => void;
+
   createBook?: (
     bookInput: book,
-    text: string,
     userId: string,
-    typeList: string
+    typeList: string,
+    text?: string
   ) => void;
+
+  updateUserBook?: (userBookId: string, listType: string) => void;
 }
 
 const initialState: BookContext = {};
@@ -44,19 +48,21 @@ export const BookContext = createContext<BookContext>(initialState);
 
 export function BookContextProvider({ children }: BookContextProvider) {
   const { createBookPost } = usePostsContext();
-  const [book, setBook] = useState();
-  const [error, setError] = useState(null);
+  const [bookBd, setBookBd] = useState();
 
-  function showError(msg, time = 3000) {
-    setError(msg);
-    setTimeout(() => setError(null), time);
+  async function getBookBd(googleId) {
+    const result = await fetch(`/api/book/${googleId}`, {
+      method: "GET",
+    });
+    const fetchData = await result.json();
+    setBookBd(fetchData);
   }
 
   async function createBook(
     bookInput: book,
-    text: string,
     userId: string,
-    typeList: string
+    typeList: string,
+    text?: string
   ) {
     try {
       const result = await fetch("/api/book", {
@@ -64,7 +70,7 @@ export function BookContextProvider({ children }: BookContextProvider) {
         body: JSON.stringify(bookInput),
       });
       const fetchData = await result.json();
-      createBookPost(fetchData.id, userId, text);
+      createBookPost(fetchData.id, userId, typeList, text);
     } catch (error) {
       console.log(error.message);
     }
@@ -73,8 +79,9 @@ export function BookContextProvider({ children }: BookContextProvider) {
   return (
     <BookContext.Provider
       value={{
-        book,
+        bookBd,
         createBook,
+        getBookBd,
       }}
     >
       {children}

@@ -1,17 +1,15 @@
 import { Console } from "console";
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from '../../../lib/prisma'
+import { prisma } from '../../../../lib/prisma'
 
 export default async function Post(req:NextApiRequest,resp: NextApiResponse){
 
-    const bookInfo = JSON.parse(req.body)
-
-    if(req.method === 'POST'){
+  
+  if(req.method === 'POST'){
+        const bookInfo = JSON.parse(req.body)
         let authors 
         let categories 
         let description
-        let currentlyReading
-        let wantRead
       
         if(bookInfo?.volumeInfo?.categories != undefined){
           categories = bookInfo?.volumeInfo?.categories[0]
@@ -22,14 +20,6 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
       
         if(bookInfo?.volumeInfo?.description != undefined){
           description = bookInfo?.volumeInfo?.description.slice(0,  200)
-        }
-      
-        if(bookInfo?.list?.includes('currently')){
-          currentlyReading = true
-          wantRead = false
-        }else if(bookInfo?.list?.includes('wantRead')){
-          currentlyReading = false
-          wantRead = true
         }
       
         try {
@@ -48,7 +38,28 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
           });
           return resp.status(200).json(savedBook)
         } catch (error) {
-            return resp.json({ message: error.message})
+            return resp.json(error)
         }
     }
+
+    
+    if(req.method === 'GET'){
+
+      if(req.query.book ){
+        const { book: id } = req.query
+        console.log(req.query)
+        try {
+          const response = await prisma.books.findFirst({
+           where:{
+            google: id[0]
+           }
+          });
+            return resp.status(200).json(response)
+          }  catch (error) {
+            return resp.status(200).json({ message: error.message})
+        }
+      }
+  }
+
+
 }

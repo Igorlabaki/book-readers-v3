@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Comments, Posts } from "@prisma/client";
 import { useState } from "react";
 import { BsThreeDots, BsTrash } from "react-icons/bs";
@@ -66,3 +66,6 @@ export function MenuButtonComponent({
     </div>
   );
 }
+
+const MemoizedMenuButtonComponent = memo(MenuButtonComponent);
+export { MemoizedMenuButtonComponent };

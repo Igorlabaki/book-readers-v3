@@ -7,6 +7,8 @@ import {
   SetStateAction,
   useState,
 } from "react";
+import useUserContext from "../Hooks/useUserContext";
+import getUser from "../pages/api/user/[id]";
 
 interface ContextProvider {
   children: ReactNode;
@@ -25,10 +27,11 @@ interface PostsContext {
   createComment?: (post: object, comment: String, userId: string) => void;
   getComments?: (postId: String) => void;
   deleteComment?: (commentId: String) => void;
-  updateComment?: (comment: Comments, text: String) => void;
+  updateComment?: (comment, text: String, user_id: String) => void;
   commentList?: Comments[];
 
   post?: any;
+  getPost?: (postId: String) => void;
   createPost?: (post: object) => void;
   getPosts?: () => Promise<any>;
   updatePost?: (post: Posts, text: String) => void;
@@ -37,9 +40,10 @@ interface PostsContext {
   allPosts?: Posts[];
 
   createBookPost?: (
-    postText: string,
     bookInputId: String,
-    userInputId: String
+    userInputId: String,
+    listType: string,
+    postText?: string
   ) => void;
 
   currentPostPage?: number;
@@ -52,6 +56,8 @@ export const PostsContext = createContext<PostsContext>({
 });
 
 export function PostsContextProvider({ children }: ContextProvider) {
+  const { getUser } = useUserContext();
+
   const [allPosts, setallPosts] = useState<Posts[]>([]);
   const [post, setPost] = useState<Object>();
 
@@ -82,7 +88,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error.message);
     }
-    setTimeout(() => setIsLoading(false), 3000);
+    setTimeout(() => setIsLoading(false), 1500);
   }
 
   async function deletePost(postId: String) {
@@ -92,12 +98,11 @@ export function PostsContextProvider({ children }: ContextProvider) {
         method: "DELETE",
         body: JSON.stringify(postId),
       });
-      console.log(post);
       getPosts();
     } catch (error) {
       console.log(error);
     }
-    setTimeout(() => setIsLoading(false), 2000);
+    setTimeout(() => setIsLoading(false), 1500);
   }
 
   async function updatePost(postInput: Posts, text: String) {
@@ -116,7 +121,22 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error);
     }
-    setTimeout(() => setIsLoading(false), 2000);
+    setTimeout(() => setIsLoading(false), 1500);
+  }
+
+  async function getPost(postId: String) {
+    setIsLoading(true);
+    const url = `/api/post/${postId}`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+      });
+      const result = await response.json();
+      setPost(result);
+    } catch (error) {
+      console.log(error);
+    }
+    setTimeout(() => setIsLoading(false), 1500);
   }
 
   async function getPosts() {
@@ -132,35 +152,47 @@ export function PostsContextProvider({ children }: ContextProvider) {
   async function createBookPost(
     bookInputId: String,
     userInputId: String,
-    postText: string
+    listType: string,
+    postText?: string
   ) {
     setIsLoading(true);
-    if (postText != "") {
-      const postBookInput = {
-        bookId: bookInputId,
-        userId: userInputId,
-        postText: postText,
-      };
-      try {
-        await fetch("/api/post", {
+    const postBookInput = {
+      bookId: bookInputId,
+      userId: userInputId,
+      listType: listType,
+      postText: postText,
+    };
+    try {
+      if (bookInputId) {
+        const response = await fetch("/api/userBook", {
           method: "POST",
           body: JSON.stringify(postBookInput),
         });
-        getPosts();
-      } catch (error) {
-        console.log(error);
+        const result = await response.json();
+        getUser(result.fk_id_user);
       }
-    } else {
-      showError("", 3000);
+      const response = await fetch("/api/post", {
+        method: "POST",
+        body: JSON.stringify(postBookInput),
+      });
+    } catch (error) {
+      console.log(error);
     }
-    setTimeout(() => setIsLoading(false), 2000);
+    getPosts();
+    setTimeout(() => setIsLoading(false), 1000);
   }
 
   async function createLike(post: Posts, userId: String) {
-    setisLikeLoading(true);
     const inputLike = {
-      idP: post.id,
-      idU: userId,
+      id: post.id,
+      user_id: userId,
+    };
+
+    const infoNotification = {
+      id: post.id,
+      user_action: userId,
+      user_id: post.user_id,
+      text: "liked your post",
     };
 
     try {
@@ -168,12 +200,16 @@ export function PostsContextProvider({ children }: ContextProvider) {
         method: "POST",
         body: JSON.stringify(inputLike),
       });
-      const result = await response.json();
+      const responseNotification = await fetch("/api/notifications", {
+        method: "POST",
+        body: JSON.stringify(infoNotification),
+      });
+      const result = await responseNotification.json();
+      console.log(result);
       getPosts();
     } catch (error) {
       console.log(error);
     }
-    setTimeout(() => setisLikeLoading(false), 2000);
   }
 
   async function getLike(postId: String, userId: String) {
@@ -204,20 +240,30 @@ export function PostsContextProvider({ children }: ContextProvider) {
   async function createComment(
     postInput: Posts,
     comment: String,
-    userId: string
+    user_id: String
   ) {
-    const info = {
+    const infoComment = {
       ...postInput,
       comment: comment,
-      user: userId,
+      user_id: user_id,
+    };
+    const infoNotification = {
+      user_action: user_id,
+      user_id: postInput.user_id,
+      text: "comment your post",
     };
     setIsLoading(true);
     if (postInput.text != "") {
       try {
-        await fetch("/api/comment", {
+        const responseComment = await fetch("/api/comment", {
           method: "POST",
-          body: JSON.stringify(info),
+          body: JSON.stringify(infoComment),
         });
+        const responseNotification = await fetch("/api/notifications", {
+          method: "POST",
+          body: JSON.stringify(infoNotification),
+        });
+        const result = await responseNotification.json();
         getPosts();
       } catch (error) {
         console.log(error);
@@ -256,18 +302,27 @@ export function PostsContextProvider({ children }: ContextProvider) {
     setTimeout(() => setIsLoading(false), 2000);
   }
 
-  async function updateComment(comment: Comments, text: String) {
+  async function updateComment(comment, text: String, user_id: String) {
     setIsLoading(true);
     const inputInfo = {
       ...comment,
       text: text,
+    };
+    const infoNotification = {
+      id: comment.post_id,
+      user_id: comment.post.user_id,
+      user_action: user_id,
+      text: "update his comment on your post",
     };
     try {
       const post = await fetch("/api/comment", {
         method: "PUT",
         body: JSON.stringify(inputInfo),
       });
-      console.log(post);
+      const responseNotification = await fetch("/api/notifications", {
+        method: "POST",
+        body: JSON.stringify(infoNotification),
+      });
       getPosts();
     } catch (error) {
       console.log(error);
@@ -285,6 +340,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
         deletePost,
         setallPosts,
         getPosts,
+        getPost,
         allPosts,
 
         createLike,

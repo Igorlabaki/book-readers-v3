@@ -20,7 +20,7 @@ export function SearchListDropDownMenu({ onClose, children }: propsNewModal) {
         />
         <div
           id="internal"
-          className={`flex justify-center items-start flex-col bg-bg-gray  w-full h-fit z-50 rounded-b-lg overflow-hidden`}
+          className={`flex justify-start items-start flex-col bg-bg-gray shadow-pattern w-full h-fit z-50 rounded-b-lg overflow-hidden`}
         >
           {children}
         </div>

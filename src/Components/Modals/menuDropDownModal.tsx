@@ -12,7 +12,7 @@ export function ModalDropDownMenu({ onClose, children }: propsNewModal) {
 
   return (
     <>
-      <div className="flex w-full h-full justify-center items-center absolute top-12 right-20">
+      <div className="flex w-full h-full justify-center items-center absolute top-[4.5rem] right-20">
         <div
           id="external"
           onClick={handleOutsideClick}
@@ -20,7 +20,7 @@ export function ModalDropDownMenu({ onClose, children }: propsNewModal) {
         />
         <div
           id="internal"
-          className={`flex justify-center items-center flex-col bg-white shadow-lg min-w-[150px] z-50 rounded-b-lg rounded-tl-lg overflow-hidden`}
+          className={`flex justify-start items-center flex-col bg-white shadow-lg min-w-[150px] z-50 rounded-b-lg rounded-tl-lg overflow-hidden`}
         >
           {children}
         </div>

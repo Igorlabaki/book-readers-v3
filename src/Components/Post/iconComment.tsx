@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { memo, useState } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { MdModeComment } from "react-icons/md";
 
@@ -13,21 +13,21 @@ export function IconCommentComponent({
   commentIsOpen,
   setComment,
 }: EditProps) {
-  const noComment = post?.Comments.length == 0;
+  const noComment = post?.Comments?.length == 0;
 
   return (
     <>
-      <div className="flex justify-center items-center">
+      <div className="flex justify-center items-center space-x-[0.5px]">
         {noComment ? (
-          <MdModeComment fontSize={20} color={"#d0edad"} />
+          <MdModeComment fontSize={18} color={"#D1D5DB"} />
         ) : (
-          <MdModeComment fontSize={20} color={" #8BC34A"} />
+          <MdModeComment fontSize={18} color={" #8BC34A"} />
         )}
         <p
           className={`${
-            noComment ? "text-[#d0edad]" : "text-[#8BC34A]"
+            noComment ? "text-[#D1D5DB]" : "text-[#8BC34A]"
           } text-sm`}
-        >{`(${post?.Comments.length})`}</p>
+        >{`(${post?.Comments?.length})`}</p>
         <div onClick={() => setComment(!commentIsOpen)}>
           {commentIsOpen ? (
             <IoIosArrowUp
@@ -35,7 +35,7 @@ export function IconCommentComponent({
               cursor={"pointer"}
               className="comment-arrow text-[#8BC34A]"
             />
-          ) : post.Comments.length > 0 ? (
+          ) : post?.Comments?.length > 0 ? (
             <IoIosArrowDown
               fontSize={12}
               cursor={"pointer"}
@@ -47,3 +47,6 @@ export function IconCommentComponent({
     </>
   );
 }
+
+const MemoizedIconCommentComponent = memo(IconCommentComponent);
+export { MemoizedIconCommentComponent };

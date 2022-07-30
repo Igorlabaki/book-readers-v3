@@ -16,7 +16,7 @@ export default async function Comment(req: NextApiRequest, resp: NextApiResponse
           },
           user: {
             connect: {
-              id: postInfo.user
+              id: postInfo.user_id
             }
           }
         }

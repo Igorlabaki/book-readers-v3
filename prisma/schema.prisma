@@ -65,20 +65,44 @@ model User {
   Posts         Posts[]
   Comments      Comments[]
   Likes         Likes[]
+  followedBy    Follows[]   @relation("following")
+  following     Follows[]   @relation("follower")
+<<<<<<< HEAD
+
+  action_notifications Notifications[] @relation("userAction")
+  user_notifications   Notifications[] @relation("userNotification")
+=======
+>>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
 
   @@map("users")
 }
 
 model Posts {
+<<<<<<< HEAD
+  id            String          @id @default(uuid())
+  text          String?
+  created_at    DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  user_id       String
+  user          User            @relation(fields: [user_id], references: [id])
+  book_id       String?
+  book          Books?          @relation(fields: [book_id], references: [id])
+  Comments      Comments[]
+  Likes         Likes[]
+  Notifications Notifications[]
+=======
   id         String     @id @default(uuid())
-  text       String
+  text       String?
   created_at DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
   user_id    String
   user       User       @relation(fields: [user_id], references: [id])
   book_id    String?
   book       Books?     @relation(fields: [book_id], references: [id])
   Comments   Comments[]
   Likes      Likes[]
+>>>>>>> 77f78236076e25f231f0787412c3bc29c1d4cf25
+
 
   @@map("posts")
 }
@@ -95,10 +119,19 @@ model Comments {
   @@map("comments")
 }
 
+model Follows {
+  follower    User   @relation("follower", fields: [followerId], references: [id])
+  followerId  String
+  following   User   @relation("following", fields: [followingId], references: [id])
+  followingId String
+
+  @@id([followerId, followingId])
+}
+
 model Books {
   id             String      @id @default(uuid())
-  google         String
-  title          String?     @unique
+  google         String      @unique
+  title          String?
   authors        String?
   subtitle       String?
   pageCount      Int?
@@ -110,19 +143,18 @@ model Books {
   User           UserBooks[]
   Posts          Posts[]
 
-
   @@map("books")
 }
 
 model UserBooks {
-  id               String   @id @default(uuid())
-  book             Books    @relation(fields: [fk_id_book], references: [id])
-  fk_id_book       String
-  user             User     @relation(fields: [fk_id_user], references: [id])
-  fk_id_user       String
-  created_at       DateTime @default(now())
-  currentlyReading Boolean  @default(false)
-  wantRead         Boolean  @default(false)
+  id         String   @id @default(uuid())
+  book       Books    @relation(fields: [fk_id_book], references: [id])
+  fk_id_book String
+  user       User     @relation(fields: [fk_id_user], references: [id])
+  fk_id_user String
+  created_at DateTime @default(now())
+  listType   String   @default("Read")
+  updatedAt  DateTime @updatedAt
 
   @@map("userBooks")
 }
@@ -134,5 +166,30 @@ model Likes {
   post       Posts    @relation(fields: [post_id], references: [id], onDelete: Cascade)
   user_id    String
   user       User     @relation(fields: [user_id], references: [id])
+  created_at DateTime @default(now())
+}
+
+model Follows {
+  follower    User   @relation("follower", fields: [followerId], references: [id])
+  followerId  String
+  following   User   @relation("following", fields: [followingId], references: [id])
+  followingId String
+
+  @@id([followerId, followingId])
+}
+
+model Notifications {
+  id      String  @id @default(uuid())
+  view    Boolean @default(false)
+  post_id String?
+  post    Posts?  @relation(fields: [post_id], references: [id], onDelete: Cascade)
+
+  userNotification    User   @relation("userNotification", fields: [userNotification_id], references: [id])
+  userNotification_id String
+
+  userAction    User   @relation("userAction", fields: [userAction_id], references: [id])
+  userAction_id String
+
+  text       String
   created_at DateTime @default(now())
 }
