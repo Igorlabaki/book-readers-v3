@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { FcLike, FcLikePlaceholder } from "react-icons/fc";
+import { Likes } from "@prisma/client";
+import React, { memo, useState } from "react";
+import { AiFillLike } from "react-icons/ai";
 import usePostsContext from "../../Hooks/usePostsContext";
 import useUserContext from "../../Hooks/useUserContext";
 import { Button } from "../util/Button";
@@ -11,44 +12,74 @@ interface likeProps {
 export function LikeComponent({ post }: likeProps) {
   const { createLike, deleteLike, isLikeLoading } = usePostsContext();
   const [liked, setLiked] = useState<Boolean>(false);
+  const [likeModal, setLikeModal] = useState<Boolean>(false);
 
   const { user } = useUserContext();
 
-  const like = post?.Likes.filter((l) => {
-    return l.user.id === user.id;
+  const like = post?.Likes?.filter((l) => {
+    return l?.user?.id === user?.id;
   });
 
   function handleLikeChange(post) {
-    if (like.length > 0) {
+    if (like?.length > 0) {
       return (
-        <div className="flex justify-start items-center">
+        <div
+          className="flex justify-start items-center relative"
+          onMouseOver={() => setLikeModal(!likeModal)}
+          onMouseDown={() => {
+            setLikeModal(!likeModal);
+          }}
+        >
+          {likeModal ? (
+            <>
+              <div className="bg-black opacity-50 absolute top-[1.75rem] left-1 rounded-md p-2">
+                {post?.Likes?.map((like: any) => {
+                  return (
+                    <div key={like.id}>
+                      <p className={`text-white text-sm`}>
+                        {like?.user?.username.slice(0, 11)}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          ) : null}
           <Button
             onClick={() => {
-              deleteLike(like[0].id);
+              deleteLike(like[0]?.id);
               setLiked(() => true);
             }}
-            icon={<FcLike fontSize={19} cursor={"pointer"} className={``} />}
+            icon={
+              <AiFillLike
+                fontSize={19}
+                cursor={"pointer"}
+                color={`text-blue-md`}
+                fill={"rgb(26 110 216)"}
+              />
+            }
             className={`cursor-pointer`}
           />
-          <p className="text-red-700">{`(${post?.Likes.length})`}</p>
+          <p className="text-blue-md text-sm">{`(${post?.Likes?.length})`}</p>
         </div>
       );
     } else {
       return (
-        <div className="flex space-x-[0.05rem]">
-          <FcLikePlaceholder
+        <div className="flex space-x-[0.5px]">
+          <AiFillLike
             fontSize={20}
-            className="cursor-pointer"
+            className="cursor-pointer text-gray-300"
             onClick={() => {
               createLike(post, user?.id);
               setLiked(() => false);
             }}
+            color={"text-gray-300"}
           />
           <p
-            className={`text-red-200 text-sm ${
+            className={`text-gray-300 text-sm ${
               isLikeLoading ? "animate-pulse" : ""
             }`}
-          >{`(${post?.Likes.length})`}</p>
+          >{`(${post?.Likes?.length})`}</p>
         </div>
       );
     }
@@ -56,3 +87,6 @@ export function LikeComponent({ post }: likeProps) {
 
   return <>{handleLikeChange(post)}</>;
 }
+
+const MemoizedLikeComponent = memo(LikeComponent);
+export { MemoizedLikeComponent };

@@ -1,44 +1,30 @@
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 import HeaderComponent from "../Components/Header";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useUserContext from "../Hooks/useUserContext";
 import { InputPostComponent } from "../Components/inputPost";
-import usePostsContext from "../Hooks/usePostsContext";
-import { PostComponent } from "../Components/Post";
-import { LoadingComponent } from "../Components/Post/loading";
+import {
+  MemoizedMostListComopnent,
+  MostListsComponent,
+} from "../Components/Home/mostLists";
+import { FeedComponent, MemoizedFeedComopnent } from "../Components/Home/feed";
 
 export default function HomePage({ data }) {
   const userId = data.id;
 
-  const { allPosts, getPosts, isLoading } = usePostsContext();
-  const { getUser } = useUserContext();
-  const [isGetBookLoading, setIsGetBookLoading] = useState(false);
-
-  useEffect(() => {
-    setIsGetBookLoading(true);
-    getPosts();
-    setTimeout(() => setIsGetBookLoading(false), 1500);
-  }, []);
+  const { getUser, user } = useUserContext();
 
   useEffect(() => {
     getUser(userId);
   }, []);
 
   return (
-    <div className="w-[100%] bg-bg-gray py-24 space-y-3 h-[100%]">
+    <div className="w-[100%] bg-bg-gray py-20 space-y-3 min-h-screen">
       <HeaderComponent />
+      <MemoizedMostListComopnent />
       <InputPostComponent />
-      <p className="w-[80%] m-auto text-3xl font-bold">Feed</p>
-      {isLoading || isGetBookLoading ? (
-        <LoadingComponent />
-      ) : (
-        <>
-          {allPosts?.map((post) => {
-            return <PostComponent key={post.id} post={post} />;
-          })}
-        </>
-      )}
+      <MemoizedFeedComopnent />
     </div>
   );
 }

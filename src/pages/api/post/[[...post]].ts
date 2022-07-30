@@ -1,3 +1,4 @@
+import { Console } from "console";
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from '../../../../lib/prisma'
 
@@ -6,23 +7,7 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
 
     if(req.method === 'POST'){
         const postInfo = JSON.parse(req.body)
-
-        if(postInfo.bookId){
             try {
-                const savedBookUser = await prisma.userBooks.create({
-                    data: {
-                    book:{
-                        connect:{
-                        id: postInfo.bookId
-                        }
-                    },
-                    user:{
-                        connect:{
-                        id: postInfo.userId
-                        }
-                    }
-                    },
-                });
                 const savedPost = await prisma.posts.create({
                     data: {
                      text: postInfo.postText,
@@ -38,43 +23,61 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
                      },
                     },
                   }); 
-                  return resp.json(savedBookUser)
+                  return resp.json(savedPost)
             } catch (error) {
                 console.log(error)
                 return resp.json({ message: error.message})
             }
-        }else{
-            try {
-                const postInfo = JSON.parse(req.body)
-                
-                const post = await prisma.posts.create({
-                    data:{
-                        text: postInfo.text,
-                        user:{
-                            connect:{
-                                id: postInfo.user_id
-                            }
-                        },
-                    }
-                })
-                
-                return resp.status(200).json(post)
-    
-            } catch (error) {
-                return resp.json({ message: error.message})
-            }
-        }
     }
 
     if(req.method === 'GET'){
-        try {
-            const post = await prisma.posts.findMany({
-                include:{
-                    user: true,
+        const { post } = req.query
+        if(post){
+            try {
+                const response = await prisma.posts.findFirst({
+                  where:{
+                    id: post[0]
+                  },
+                  include:{
+                    user: {
+                        include: {
+                            Books: true
+                        }
+                    },
                     book: true,
                     Comments: {
                         include:{
-                            user: true
+                            user: true,
+                            post: true
+                        }
+                    },
+                    Likes: {
+                        include:{
+                            user: true,
+                            post: true,
+                        }
+                    }
+                },
+                });
+                  return resp.status(200).json(response)
+                }  catch (error) {
+                  console.log(error)
+                  return resp.status(200).json({ message: error.message})
+              }
+        }
+        try {
+            const post = await prisma.posts.findMany({
+                include:{
+                    user: {
+                        include: {
+                            Books: true
+                        }
+                    },
+                    book: true,
+                    Comments: {
+                        include:{
+                            user: true,
+                            post: true
                         }
                     },
                     Likes: {
@@ -85,7 +88,7 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
                     }
                 },
                 orderBy:{
-                    created_at: 'desc',
+                    updatedAt: 'desc'
                 }
             })
             return resp.status(200).json(post)
@@ -124,6 +127,7 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
         } catch (error) {
             return resp.json({ message: error.message})
         }
+
     }
 
 

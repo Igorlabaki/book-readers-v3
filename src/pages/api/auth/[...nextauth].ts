@@ -8,6 +8,11 @@ export const authOptions = {
     GithubProvider({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
+      authorization: {
+        params: {
+          scope: 'read:user'
+        }
+      },
       profile(profile){
         return{
           id: profile.id.toString(),
@@ -24,12 +29,8 @@ export const authOptions = {
     session: ({session, user}) => ({
       ...session,
       user:{
-        ...session.user,
-        id:        user.id,
-        books:     user.books || [],      
-        posts:     user.posts || [],    
-        comments:  user.comments || [],   
-        likes:     user.likes || [],   
+        ...session.user,   
+        ...user
       }
     })
   }

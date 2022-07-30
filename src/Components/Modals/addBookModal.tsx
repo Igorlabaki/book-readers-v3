@@ -12,7 +12,7 @@ export function AddBookModalComponent({ onClose, children }: propsNewModal) {
 
   return (
     <>
-      <div className="flex w-full h-full justify-center items-center overflow-y-scroll">
+      <div className="flex w-full h-full  absolute ">
         <div
           id="external"
           onClick={handleOutsideClick}
@@ -21,7 +21,7 @@ export function AddBookModalComponent({ onClose, children }: propsNewModal) {
         <div
           id="internal"
           className={`flex justify-center items-center rounded-[1.25rem] w-full h-full flex-col fixed z-[60] top-0 max-w-[48rem] px-[0.75rem] pt-[1.25rem] pb-[0.75rem]    
-          border-none  lg:pt-[2.5rem] lg:pb-[2.5rem]`}
+          border-none`}
         >
           {children}
         </div>
