@@ -5,8 +5,10 @@ interface UserContextProvider {
 }
 interface UserContext {
   user?: any;
+  allUser?: any;
   profile?: any;
   getUser?: (id: string) => void;
+  getAllUser?: () => void;
   getProfile?: (id: string) => void;
   getPagesRead?: (memberBooks) => any;
   getLastRead?: (memberBooks) => any;
@@ -22,24 +24,27 @@ export const UserContext = createContext<UserContext>(initialState);
 
 export function UserContextProvider({ children }: UserContextProvider) {
   const [user, setUser] = useState<any>(null);
+  const [allUser, setAllUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loadingProfile, setLoadingProfile] = useState<boolean>(true);
 
-  async function getUser(userId: string) {
-    const resp = await axios
-      .get(`/api/user/${userId}`)
-      .then((resp) => resp.data);
+  async function getAllUser() {
+    const response = await fetch(`/api/test`);
+    const result = await response.json();
+    setAllUser(() => result);
+  }
 
-    setUser(() => resp);
-    console.log(user);
+  async function getUser(userId: string) {
+    const response = await fetch(`/api/user/${userId}`);
+    const result = await response.json();
+    setUser(() => result);
   }
 
   async function getProfile(userId: string) {
     setLoadingProfile(true);
-    const resp = await axios
-      .get(`/api/user/${userId}`)
-      .then((resp) => resp.data);
-    setProfile(() => resp);
+    const response = await fetch(`/api/user/${userId}`);
+    const result = await response.json();
+    setProfile(() => result);
     setLoadingProfile(false);
   }
 
@@ -98,7 +103,9 @@ export function UserContextProvider({ children }: UserContextProvider) {
         user,
         profile,
         loadingProfile,
+        allUser,
         getUser,
+        getAllUser,
         getProfile,
         getLongestBook,
         getShortestBook,

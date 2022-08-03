@@ -76,12 +76,12 @@ export default function HeaderComponent() {
                 <p className="font-bold text-md py-2 px-3 text-blue-900">
                   Notifications
                 </p>
-                {user?.user_notification?.length === 0 ? (
+                {user?.user_notifications?.length === 0 ? (
                   <p className="text-sm py-1 px-3 font-semibold flex justify-center items-center text-gray-500 text-center w-[100%]">
                     No notifications register yet
                   </p>
                 ) : (
-                  user?.user_notification?.map((notification: any, i) => {
+                  user?.user_notifications?.map((notification: any, i) => {
                     if (i >= 5) {
                       return;
                     }

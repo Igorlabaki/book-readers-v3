@@ -1,6 +1,7 @@
 import { Books, UserBooks } from "@prisma/client";
 import axios from "axios";
 import { createContext, ReactNode, useState } from "react";
+import useBookContext from "../Hooks/useBookContext";
 import usePostsContext from "../Hooks/usePostsContext";
 import useUserContext from "../Hooks/useUserContext";
 
@@ -11,9 +12,11 @@ interface UserBookContextProvider {
 interface UserBookContext {
   mostReadList?: Books[];
   mostPostsList?: Books[];
+  userBookBd?: UserBooks;
   getMostReadBook?: () => void;
   getMostPostBook?: () => void;
-  deleteUserBooks?: (userBook: UserBooks) => void;
+  getUserBook?: (userBookId: String) => void;
+  deleteUserBooks?: (userBook: UserBooks, bookId: string) => void;
 
   updateUserBook?: (
     userBookId: string,
@@ -29,8 +32,11 @@ export const UserBookContext = createContext<UserBookContext>(initialState);
 export function UserBookContextProvider({ children }: UserBookContextProvider) {
   const { getPosts } = usePostsContext();
   const { getUser } = useUserContext();
+  const { getBookBd } = useBookContext();
+
   const [mostReadList, setMostReadList] = useState<Books[]>([]);
   const [mostPostsList, setMostPostsList] = useState<Books[]>([]);
+  const [userBookBd, setuserBookBd] = useState<UserBooks>();
 
   async function updateUserBook(
     userBookId: string,
@@ -51,8 +57,8 @@ export function UserBookContextProvider({ children }: UserBookContextProvider) {
         body: JSON.stringify(data),
       });
       const fetchData = await result.json();
-      getPosts();
       getUser(fetchData.fk_id_user);
+      getPosts(fetchData.fk_id_user);
     } catch (error) {
       console.log(error.message);
     }
@@ -74,7 +80,15 @@ export function UserBookContextProvider({ children }: UserBookContextProvider) {
     setMostPostsList(fetchData);
   }
 
-  async function deleteUserBooks(userBook: UserBooks) {
+  async function getUserBook() {
+    const result = await fetch(`/api/userBook/${"userBook"}`, {
+      method: "GET",
+    });
+    const fetchData = await result.json();
+    setuserBookBd(fetchData);
+  }
+
+  async function deleteUserBooks(userBook: UserBooks, bookId: string) {
     try {
       const response = await fetch("/api/userBook", {
         method: "DELETE",
@@ -82,6 +96,7 @@ export function UserBookContextProvider({ children }: UserBookContextProvider) {
       });
       const result = await response.json();
       getUser(result.fk_id_user);
+      getBookBd(bookId);
     } catch (error) {
       console.log(error);
     }
@@ -92,6 +107,8 @@ export function UserBookContextProvider({ children }: UserBookContextProvider) {
       value={{
         mostReadList,
         mostPostsList,
+        userBookBd,
+        getUserBook,
         getMostReadBook,
         getMostPostBook,
         deleteUserBooks,

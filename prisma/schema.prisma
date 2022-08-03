@@ -71,21 +71,26 @@ model User {
   action_notifications Notifications[] @relation("userAction")
   user_notifications   Notifications[] @relation("userNotification")
 
+  userProfile Posts[] @relation("userProfile")
+
   @@map("users")
 }
 
 model Posts {
-  id            String          @id @default(uuid())
-  text          String?
-  created_at    DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  user_id       String
-  user          User            @relation(fields: [user_id], references: [id])
-  book_id       String?
-  book          Books?          @relation(fields: [book_id], references: [id])
-  Comments      Comments[]
-  Likes         Likes[]
-  Notifications Notifications[]
+  id             String          @id @default(uuid())
+  text           String?
+  action         String?
+  created_at     DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  userProfile    User?           @relation("userProfile", fields: [userProfile_id], references: [id])
+  userProfile_id String?
+  user_id        String
+  user           User            @relation(fields: [user_id], references: [id])
+  book_id        String?
+  book           Books?          @relation(fields: [book_id], references: [id])
+  Comments       Comments[]
+  Likes          Likes[]
+  Notifications  Notifications[]
 
   @@map("posts")
 }

@@ -108,7 +108,6 @@ export function SearchInput() {
 
   return (
     <form
-      action="GET"
       onSubmit={(e) => {
         e.preventDefault();
         router.push(`/search/list/${search}`);

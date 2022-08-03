@@ -19,6 +19,8 @@ export const FollowContext = createContext<FollowContext>(initialState);
 
 export function FollowContextProvider({ children }: FollowContextProvider) {
   const { getProfile, getUser } = useUserContext();
+  const { createPost } = usePostsContext();
+  const { getPosts } = usePostsContext();
 
   async function follow(followingId: String, followerId: String) {
     const followData = {
@@ -30,7 +32,11 @@ export function FollowContextProvider({ children }: FollowContextProvider) {
       user_action: followerId,
       text: "is now following you",
     };
-
+    const infoPost = {
+      user_id: followerId,
+      userProfile_id: followingId,
+      action: "is now following",
+    };
     try {
       const response = await fetch("/api/follow", {
         method: "POST",
@@ -41,9 +47,10 @@ export function FollowContextProvider({ children }: FollowContextProvider) {
         body: JSON.stringify(infoNotification),
       });
       const result = await response.json();
+      createPost(infoPost);
       getProfile(result.followingId);
       getUser(result.followerId);
-      console.log(result);
+      getPosts(result.followerId);
     } catch (error) {
       console.log(error);
     }
@@ -62,6 +69,7 @@ export function FollowContextProvider({ children }: FollowContextProvider) {
       const result = await response.json();
       getProfile(result.followingId);
       getUser(result.followerId);
+      getPosts(result.followerId);
     } catch (error) {
       console.log(error);
     }

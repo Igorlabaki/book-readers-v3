@@ -66,6 +66,18 @@ export function PostComponent({ post }) {
                     ? `wants to read`
                     : null}
                 </p>
+              ) : post?.action ? (
+                <div className="flex justify-start items-center space-x-2">
+                  <p className="text-sm italic">{post?.action}</p>
+                  <p
+                    className="font-semibold text-sm cursor-pointer"
+                    onClick={() => {
+                      router.push(`/profile/${post?.userProfile?.id}`);
+                    }}
+                  >
+                    {post?.userProfile?.username}
+                  </p>
+                </div>
               ) : null}
             </div>
 

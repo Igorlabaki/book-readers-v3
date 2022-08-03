@@ -14,12 +14,12 @@ export default function NotificationsPage() {
       <div>
         <p className="w-[80%] m-auto text-3xl font-bold pt-20">Notifications</p>
         <CardComponent classname="mt-5 bg-white  space-y-2">
-          {user?.user_notification.length === 0 ? (
+          {user?.user_notifications.length === 0 ? (
             <p className="text-md py-1 px-3 font-semibold flex justify-center items-center text-gray-400 text-center w-[100%]">
               No notifications register yet
             </p>
           ) : (
-            user?.user_notification?.map((notification: any) => {
+            user?.user_notifications?.map((notification: any) => {
               return (
                 <div
                   key={notification?.id}

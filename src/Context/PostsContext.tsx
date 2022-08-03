@@ -33,7 +33,7 @@ interface PostsContext {
   post?: any;
   getPost?: (postId: String) => void;
   createPost?: (post: object) => void;
-  getPosts?: () => Promise<any>;
+  getPosts?: (userId: String) => Promise<any>;
   updatePost?: (post: Posts, text: String) => void;
   deletePost?: (postId: String) => void;
   setallPosts?: Dispatch<SetStateAction<Posts[]>>;
@@ -56,7 +56,7 @@ export const PostsContext = createContext<PostsContext>({
 });
 
 export function PostsContextProvider({ children }: ContextProvider) {
-  const { getUser } = useUserContext();
+  const { getUser, user } = useUserContext();
 
   const [allPosts, setallPosts] = useState<Posts[]>([]);
   const [post, setPost] = useState<Object>();
@@ -78,15 +78,18 @@ export function PostsContextProvider({ children }: ContextProvider) {
 
   async function createPost(postInput: Posts) {
     setIsLoading(true);
+    console.log(postInput);
     try {
       const post = await fetch("/api/post", {
         method: "POST",
         body: JSON.stringify(postInput),
       });
-      setPost(() => post);
-      getPosts();
+      const result = await post.json();
+      setPost(() => result);
+      console.log(result);
+      getPosts(user.id);
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
     }
     setTimeout(() => setIsLoading(false), 1500);
   }
@@ -98,7 +101,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
         method: "DELETE",
         body: JSON.stringify(postId),
       });
-      getPosts();
+      getPosts(user.id);
     } catch (error) {
       console.log(error);
     }
@@ -117,7 +120,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
         body: JSON.stringify(inputInfo),
       });
       console.log(post);
-      getPosts();
+      getPosts(user.id);
     } catch (error) {
       console.log(error);
     }
@@ -126,7 +129,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
 
   async function getPost(postId: String) {
     setIsLoading(true);
-    const url = `/api/post/${postId}`;
+    const url = `/api/post/${"user"}/${postId}`;
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -139,9 +142,9 @@ export function PostsContextProvider({ children }: ContextProvider) {
     setTimeout(() => setIsLoading(false), 1500);
   }
 
-  async function getPosts() {
+  async function getPosts(userId: String) {
     try {
-      const response = await fetch("/api/post");
+      const response = await fetch(`/api/post/${user.id}`);
       const result = await response.json();
       setallPosts(result);
     } catch (error) {
@@ -178,7 +181,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error);
     }
-    getPosts();
+    getPosts(user?.id);
     setTimeout(() => setIsLoading(false), 1000);
   }
 
@@ -206,7 +209,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
       });
       const result = await responseNotification.json();
       console.log(result);
-      getPosts();
+      getPosts(user.id);
     } catch (error) {
       console.log(error);
     }
@@ -231,7 +234,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
         body: JSON.stringify(likeId),
       });
       const result = await response.json();
-      getPosts();
+      getPosts(user.id);
     } catch (error) {
       console.log(error);
     }
@@ -264,7 +267,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
           body: JSON.stringify(infoNotification),
         });
         const result = await responseNotification.json();
-        getPosts();
+        getPosts(user.id);
       } catch (error) {
         console.log(error);
       }
@@ -281,7 +284,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
       });
       const result = await response.json();
       setCommentList(result);
-      getPosts();
+      getPosts(user.id);
     } catch (error) {
       console.log(error);
     }
@@ -295,7 +298,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
         body: JSON.stringify(commentId),
       });
       const result = await response.json();
-      getPosts();
+      getPosts(user.id);
     } catch (error) {
       console.log(error);
     }
@@ -323,7 +326,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
         method: "POST",
         body: JSON.stringify(infoNotification),
       });
-      getPosts();
+      getPosts(user.id);
     } catch (error) {
       console.log(error);
     }

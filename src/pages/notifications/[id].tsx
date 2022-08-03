@@ -30,6 +30,8 @@ export default function Profile() {
     getPost(id?.toString());
   }, []);
 
+  console.log(post);
+
   return (
     <div className="w-[100%] bg-bg-gray min-h-screen pb-[5rem]">
       <HeaderComponent />

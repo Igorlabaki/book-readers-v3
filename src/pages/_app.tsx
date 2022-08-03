@@ -23,12 +23,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
                   </FollowContextProvider>
                 </UserBookContextProvider>
               </NotificationContextProvider>
-
-              <UserBookContextProvider>
-                <FollowContextProvider>
-                  <Component {...pageProps} />
-                </FollowContextProvider>
-              </UserBookContextProvider>
             </BookContextProvider>
           </GoogleBookContextProvider>
         </PostsContextProvider>

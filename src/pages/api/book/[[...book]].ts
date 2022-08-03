@@ -52,6 +52,10 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
           const response = await prisma.books.findFirst({
            where:{
             google: id[0]
+           },
+           include:{
+            User: true,
+            Posts: true
            }
           });
             return resp.status(200).json(response)

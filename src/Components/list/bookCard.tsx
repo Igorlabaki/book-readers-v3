@@ -79,7 +79,10 @@ export function BookCard({ bookUser, userBookFilter }: BookCardProps) {
           )}
           <div className="w-[100%] ">
             <div className="flex justify-between">
-              <h2 className="font-bold w-[50%]">
+              <h2
+                className="font-bold w-[50%] cursor-pointer"
+                onClick={() => router.push(`/search/id/${bookUser?.id}`)}
+              >
                 {bookUser?.volumeInfo?.title}
               </h2>
               <div className=" relative flex justify-start items-center w-[200px]">
@@ -185,7 +188,7 @@ export function BookCard({ bookUser, userBookFilter }: BookCardProps) {
               <button
                 onClick={() => {
                   handleCloseCancelListModal();
-                  deleteUserBooks(userBookFilter[0]);
+                  deleteUserBooks(userBookFilter[0], bookBd.id);
                 }}
                 className="py-2  shadow-pattern hover:brightness-125 w-[100px] rounded-lg text-white font-semibold bg-blue-900"
               >

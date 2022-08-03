@@ -1,18 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "../../../../lib/prisma";
+import { prisma } from "../../../lib/prisma";
 
 export default async function getUser(req:NextApiRequest,resp: NextApiResponse){
 
-const { id } = req.query
-
-const teste = id.toString()
-
  try {
 
-  const user = await prisma.user.findUnique({
-    where:{
-        id: teste.toString()
-    },
+  const user = await prisma.user.findMany({
     include:{
       Books: {
         include:{
@@ -56,13 +49,6 @@ const teste = id.toString()
           userAction: true
         }
       },
-      userProfile:{
-        include:{
-          userProfile: true,
-          Comments: true,
-          Likes: true
-        }
-      }
     }
   });
 
