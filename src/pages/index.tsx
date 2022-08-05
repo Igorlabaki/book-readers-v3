@@ -24,9 +24,7 @@ export default function Home() {
   }
 
   function handlerSubmit(provider: string) {
-    signIn(provider, {
-      callbackUrl: "/homePage",
-    });
+    signIn("github");
   }
 
   const schema = yup
