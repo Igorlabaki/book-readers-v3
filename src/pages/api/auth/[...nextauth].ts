@@ -28,13 +28,19 @@ export const authOptions = {
   secret: process.env.NEXT_AUTH_SECRET,
   adapter: PrismaAdapter(prisma),
   callbacks: {
-    session: ({session, user}) => ({
+    /*session: ({session, user}) => ({
       ...session,
       user:{
         ...session.user,   
         ...user
       }
-    })
+    })*/
+
+    async session({ session, token, user }) {
+    // Send properties to the client, like an access_token from a provider.
+    session.accessToken = token.accessToken
+    return session
+  }
   }
 }
 
