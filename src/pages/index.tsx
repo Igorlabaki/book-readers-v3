@@ -9,6 +9,8 @@ import { Button } from "../Components/util/Button";
 import { Link } from "../Components/util/Link";
 import { useState } from "react";
 import { ModalEditComponent } from "../Components/Modals/authModal";
+import usePostsContext from "../Hooks/usePostsContext";
+import useUserContext from "../Hooks/useUserContext";
 
 export default function Home() {
   const [modal, setModal] = useState(false);
