@@ -1,24 +1,14 @@
 import moment from "moment";
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useState } from "react";
 import { CardComponent } from "../util/Card";
-
 import useUserContext from "../../Hooks/useUserContext";
-
 import usePostsContext from "../../Hooks/usePostsContext";
-
-import {
-  MenuButtonComponent,
-  MemoizedMenuButtonComponent,
-} from "./MenuButtonComponent";
-import { EditComponent, MemoizedEditComponent } from "./editComponent";
-import { LikeComponent, MemoizedLikeComponent } from "./likeComponent";
-import {
-  IconCommentComponent,
-  MemoizedIconCommentComponent,
-} from "./iconComment";
-import { CommentComponent, MemoizedCommentComponent } from "./commentComponent";
+import { MenuButtonComponent } from "./MenuButtonComponent";
+import { EditComponent } from "./editComponent";
+import { LikeComponent } from "./likeComponent";
+import { IconCommentComponent } from "./iconComment";
+import { CommentComponent } from "./commentComponent";
 import { useRouter } from "next/router";
-import useNotificationContext from "../../Hooks/useNotificationContext copy";
 
 export function PostComponent({ post }) {
   const [textAreaIsOpen, setTextAreaIsOpen] = useState<boolean>(false);
@@ -81,7 +71,7 @@ export function PostComponent({ post }) {
               ) : null}
             </div>
 
-            <MemoizedMenuButtonComponent
+            <MenuButtonComponent
               type="post"
               openTextAreaModal={setTextAreaIsOpen}
               post={post}
@@ -128,7 +118,7 @@ export function PostComponent({ post }) {
                       {post?.book?.authors}
                     </p>
                   </div>
-                  <MemoizedEditComponent
+                  <EditComponent
                     type={"post"}
                     post={post}
                     textAreaIsOpen={textAreaIsOpen}
@@ -138,7 +128,7 @@ export function PostComponent({ post }) {
               </div>
             </div>
           ) : (
-            <MemoizedEditComponent
+            <EditComponent
               type={"post"}
               post={post}
               textAreaIsOpen={textAreaIsOpen}
@@ -147,8 +137,8 @@ export function PostComponent({ post }) {
           )}
           <div className="flex justify-start items-center w-[100%] my-1">
             <div className="flex justify-center items-center space-x-4 w-[140px]">
-              <MemoizedLikeComponent post={post} />
-              <MemoizedIconCommentComponent
+              <LikeComponent post={post} />
+              <IconCommentComponent
                 post={post}
                 setComment={setCommentIsOpen}
                 commentIsOpen={commentIsOpen}
@@ -178,10 +168,7 @@ export function PostComponent({ post }) {
           </div>
         </div>
       </div>
-      {commentIsOpen ? <MemoizedCommentComponent post={post} /> : null}
+      {commentIsOpen ? <CommentComponent post={post} /> : null}
     </CardComponent>
   );
 }
-
-const MemoizedPostComopnent = memo(PostComponent);
-export { MemoizedPostComopnent };

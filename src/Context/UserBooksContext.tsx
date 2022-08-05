@@ -1,6 +1,6 @@
 import { Books, UserBooks } from "@prisma/client";
 import axios from "axios";
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useCallback, useState } from "react";
 import useBookContext from "../Hooks/useBookContext";
 import usePostsContext from "../Hooks/usePostsContext";
 import useUserContext from "../Hooks/useUserContext";
@@ -38,6 +38,22 @@ export function UserBookContextProvider({ children }: UserBookContextProvider) {
   const [mostPostsList, setMostPostsList] = useState<Books[]>([]);
   const [userBookBd, setuserBookBd] = useState<UserBooks>();
 
+  const getMostReadBook = useCallback(async () => {
+    const result = await fetch(`/api/userBook/${"mostReadBook"}`, {
+      method: "GET",
+    });
+    const fetchData = await result.json();
+    setMostReadList(fetchData);
+  }, []);
+
+  const getMostPostBook = useCallback(async () => {
+    const result = await fetch(`/api/userBook/${"mostPostsBook"}`, {
+      method: "GET",
+    });
+    const fetchData = await result.json();
+    setMostPostsList(fetchData);
+  }, []);
+
   async function updateUserBook(
     userBookId: string,
     listType: string,
@@ -62,22 +78,6 @@ export function UserBookContextProvider({ children }: UserBookContextProvider) {
     } catch (error) {
       console.log(error.message);
     }
-  }
-
-  async function getMostReadBook() {
-    const result = await fetch(`/api/userBook/${"mostReadBook"}`, {
-      method: "GET",
-    });
-    const fetchData = await result.json();
-    setMostReadList(fetchData);
-  }
-
-  async function getMostPostBook() {
-    const result = await fetch(`/api/userBook/${"mostPostsBook"}`, {
-      method: "GET",
-    });
-    const fetchData = await result.json();
-    setMostPostsList(fetchData);
   }
 
   async function getUserBook() {

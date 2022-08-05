@@ -1,11 +1,14 @@
 import { ReactNode } from "react";
 
-interface propsNewModal {
+export interface propsAddBookModal {
   onClose: () => void;
   children: ReactNode;
 }
 
-export function AddBookModalComponent({ onClose, children }: propsNewModal) {
+export function AddBookModalComponent({
+  onClose,
+  children,
+}: propsAddBookModal) {
   const handleOutsideClick = (e: any) => {
     if (e.target.id) onClose();
   };

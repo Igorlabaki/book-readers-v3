@@ -1,11 +1,11 @@
 import { ReactNode } from "react";
 
-interface propsNewModal {
+export interface propsSelectListModal {
   onClose: () => void;
   children: ReactNode;
 }
 
-export function ModalSelectRating({ onClose, children }: propsNewModal) {
+export function SelectListModal({ onClose, children }: propsSelectListModal) {
   const handleOutsideClick = (e: any) => {
     if (e.target.id) onClose();
   };

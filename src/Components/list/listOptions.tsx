@@ -1,13 +1,12 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import useBookContext from "../../Hooks/useBookContext";
 import useUserBookContext from "../../Hooks/useUserBookContext";
 import useGoogleBooksContext from "../../Hooks/useGoogleBooksContext";
 import usePostsContext from "../../Hooks/usePostsContext";
 import useUserContext from "../../Hooks/useUserContext";
-import { AddBookModalComponent } from "../Modals/addBookModal";
-import { ModalSelectRating } from "../Modals/selectRatingModal";
-import { Button } from "../util/Button";
+import { propsSelectListModal } from "../Modals/selectListModal";
+import dynamic from "next/dynamic";
 
 interface Props {
   lisOpenIsOpen: boolean;
@@ -30,8 +29,6 @@ export function ListOptions({
 
   const router = useRouter();
 
-  useEffect(() => {}, []);
-
   function handleUpdate(e, selectValue) {
     e.preventDefault();
     if (
@@ -49,10 +46,16 @@ export function ListOptions({
     router.push("/homePage");
   }
 
+  const SelectListModal = dynamic<propsSelectListModal>(() => {
+    return import("../Modals/selectListModal").then(
+      (comp) => comp.SelectListModal
+    );
+  });
+
   return (
     <>
       {lisOpenIsOpen ? (
-        <ModalSelectRating onClose={() => setlistOptionsClose()}>
+        <SelectListModal onClose={() => setlistOptionsClose()}>
           <div className="w-[100%]">
             <div className="flex flex-col justify-start w-[100%]  border-gray-500">
               <p
@@ -81,7 +84,7 @@ export function ListOptions({
               </p>
             </div>
           </div>
-        </ModalSelectRating>
+        </SelectListModal>
       ) : null}
     </>
   );

@@ -10,6 +10,7 @@ interface PropsInterface {
 
 export function CommentComponent({ post }: PropsInterface) {
   const [textAreaIsOpen, setTextAreaIsOpen] = useState<boolean>(false);
+
   const router = useRouter();
   return (
     <>
@@ -55,6 +56,3 @@ export function CommentComponent({ post }: PropsInterface) {
     </>
   );
 }
-
-const MemoizedCommentComponent = memo(CommentComponent);
-export { MemoizedCommentComponent };

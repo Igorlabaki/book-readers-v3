@@ -78,7 +78,6 @@ export function PostsContextProvider({ children }: ContextProvider) {
 
   async function createPost(postInput: Posts) {
     setIsLoading(true);
-    console.log(postInput);
     try {
       const post = await fetch("/api/post", {
         method: "POST",
@@ -91,7 +90,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error);
     }
-    setTimeout(() => setIsLoading(false), 1500);
+    setIsLoading(false);
   }
 
   async function deletePost(postId: String) {
@@ -105,7 +104,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error);
     }
-    setTimeout(() => setIsLoading(false), 1500);
+    setIsLoading(false);
   }
 
   async function updatePost(postInput: Posts, text: String) {
@@ -119,12 +118,11 @@ export function PostsContextProvider({ children }: ContextProvider) {
         method: "PUT",
         body: JSON.stringify(inputInfo),
       });
-      console.log(post);
       getPosts(user.id);
     } catch (error) {
       console.log(error);
     }
-    setTimeout(() => setIsLoading(false), 1500);
+    setIsLoading(false);
   }
 
   async function getPost(postId: String) {
@@ -139,7 +137,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error);
     }
-    setTimeout(() => setIsLoading(false), 1500);
+    setIsLoading(false);
   }
 
   async function getPosts(userId: String) {
@@ -182,7 +180,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
       console.log(error);
     }
     getPosts(user?.id);
-    setTimeout(() => setIsLoading(false), 1000);
+    setIsLoading(false);
   }
 
   async function createLike(post: Posts, userId: String) {
@@ -274,7 +272,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } else {
       showError("", 3000);
     }
-    setTimeout(() => setIsLoading(false), 2000);
+    setIsLoading(false);
   }
 
   async function getComments(postId: String) {
@@ -302,7 +300,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error);
     }
-    setTimeout(() => setIsLoading(false), 2000);
+    setIsLoading(false);
   }
 
   async function updateComment(comment, text: String, user_id: String) {
@@ -330,7 +328,7 @@ export function PostsContextProvider({ children }: ContextProvider) {
     } catch (error) {
       console.log(error);
     }
-    setTimeout(() => setIsLoading(false), 2000);
+    setIsLoading(false);
   }
 
   return (

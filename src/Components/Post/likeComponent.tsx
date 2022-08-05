@@ -86,6 +86,3 @@ export function LikeComponent({ post }: likeProps) {
 
   return <>{handleLikeChange(post)}</>;
 }
-
-const MemoizedLikeComponent = memo(LikeComponent);
-export { MemoizedLikeComponent };

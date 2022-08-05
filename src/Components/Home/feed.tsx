@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import usePostsContext from "../../Hooks/usePostsContext";
 import useUserContext from "../../Hooks/useUserContext";
 import { InputPostComponent } from "../inputPost";
-import { MemoizedPostComopnent, PostComponent } from "../Post";
+import { PostComponent } from "../Post";
 import { LoadingComponent } from "../Post/loading";
 import { CardComponent } from "../util/Card";
 
@@ -33,7 +33,7 @@ export function FeedComponent() {
             </CardComponent>
           ) : (
             allPosts?.map((post) => {
-              return <MemoizedPostComopnent key={post.id} post={post} />;
+              return <PostComponent key={post.id} post={post} />;
             })
           )}
         </>

@@ -9,6 +9,7 @@ interface NotificationContextProvider {
 
 interface NotificationContext {
   createNotification?: (userId: string, postId: string, text?: string) => void;
+  updateNotification?: (notificationId: String) => void;
 }
 
 const initialState: NotificationContext = {};
@@ -44,8 +45,24 @@ export function NotificationContextProvider({
     }
   }
 
+  async function updateNotification(notificationId: String) {
+    try {
+      const response = await fetch("/api/notifications", {
+        method: "PUT",
+        body: JSON.stringify(notificationId),
+      });
+      const result = await response.json();
+      setNotifications(result);
+      console.log(notifications);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
-    <NotificationContext.Provider value={{ createNotification }}>
+    <NotificationContext.Provider
+      value={{ createNotification, updateNotification }}
+    >
       {children}
     </NotificationContext.Provider>
   );

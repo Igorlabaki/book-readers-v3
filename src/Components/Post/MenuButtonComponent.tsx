@@ -5,8 +5,9 @@ import { BsThreeDots, BsTrash } from "react-icons/bs";
 import { MdOutlineModeEditOutline } from "react-icons/md";
 import usePostsContext from "../../Hooks/usePostsContext";
 import useUserContext from "../../Hooks/useUserContext";
-import { ModalDropDownMenu } from "../Modals/editPostButton";
+import { propsEditPostButton } from "../Modals/editPostButtonModal";
 import { Button } from "../util/Button";
+import dynamic from "next/dynamic";
 
 interface EditProps {
   post?: Posts;
@@ -33,6 +34,13 @@ export function MenuButtonComponent({
   function handleCloseModal() {
     setModal(false);
   }
+
+  const EditPostButtonModalComponent = dynamic<propsEditPostButton>(() => {
+    return import("../Modals/editPostButtonModal").then(
+      (comp) => comp.EditPostButtonModal
+    );
+  });
+
   return (
     <div className="relative">
       {post?.user_id == user?.id || comment?.user_id == user?.id ? (
@@ -41,7 +49,7 @@ export function MenuButtonComponent({
         </div>
       ) : null}
       {(modal && post) || (modal && comment) ? (
-        <ModalDropDownMenu onClose={handleCloseModal}>
+        <EditPostButtonModalComponent onClose={handleCloseModal}>
           <Button
             title="Edit"
             icon={<MdOutlineModeEditOutline size={19} />}
@@ -61,7 +69,7 @@ export function MenuButtonComponent({
                 : () => deleteComment(comment?.id)
             }
           />
-        </ModalDropDownMenu>
+        </EditPostButtonModalComponent>
       ) : null}
     </div>
   );

@@ -3,10 +3,14 @@ import { FiSearch } from "react-icons/fi";
 import { ReactNode, useEffect, useState } from "react";
 import useBookContext from "../../Hooks/useBookContext";
 import { Button } from "../util/Button";
-import { SearchListDropDownMenu } from "../Modals/serachListDropDown";
+import {
+  propsSearchListDropDownMenuModal,
+  SearchListDropDownMenu,
+} from "../Modals/serchListDropDown";
 import Image from "next/image";
 import useGoogleBooksContext from "../../Hooks/useGoogleBooksContext";
 import { IoMdNotificationsOutline } from "react-icons/io";
+import dynamic from "next/dynamic";
 
 export function SearchInput() {
   const { getBooks, booksSearch } = useGoogleBooksContext();
@@ -17,20 +21,6 @@ export function SearchInput() {
   const [searchListModal, setSearchListModal] = useState(false);
 
   const router = useRouter();
-
-  useEffect(() => {
-    setSearchListModal(true);
-  }, [search]);
-
-  useEffect(() => {
-    try {
-      if (search != "") {
-        getBooks(search);
-      }
-    } catch (error) {
-      setError("Sorry we didnt find any book");
-    }
-  }, [search]);
 
   function handleCloseSearchListModal() {
     setSearchListModal(false);
@@ -105,6 +95,28 @@ export function SearchInput() {
       );
     }
   }
+
+  const SearchListDropDownMenu = dynamic<propsSearchListDropDownMenuModal>(
+    () => {
+      return import("../Modals/serchListDropDown").then(
+        (comp) => comp.SearchListDropDownMenu
+      );
+    }
+  );
+
+  useEffect(() => {
+    setSearchListModal(true);
+  }, [search]);
+
+  useEffect(() => {
+    try {
+      if (search != "") {
+        getBooks(search);
+      }
+    } catch (error) {
+      setError("Sorry we didnt find any book");
+    }
+  }, [search]);
 
   return (
     <form

@@ -78,7 +78,6 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
 if(req.method === 'GET'){
         const { post } = req.query
         if(post.length >= 2){
-            console.log(post.length >= 2)
             try {
                 const response = await prisma.posts.findFirst({
                   where:{

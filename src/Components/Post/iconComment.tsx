@@ -47,6 +47,3 @@ export function IconCommentComponent({
     </>
   );
 }
-
-const MemoizedIconCommentComponent = memo(IconCommentComponent);
-export { MemoizedIconCommentComponent };

@@ -11,8 +11,8 @@ import { MdDone, MdKeyboardArrowDown } from "react-icons/md";
 import { TiPlus } from "react-icons/ti";
 import HearderComponent from "../../../Components/Header";
 import { ListOptions } from "../../../Components/list/listOptions";
-import { AddBookModalComponent } from "../../../Components/Modals/addBookModal";
-import { CancelListModal } from "../../../Components/Modals/cancelListModal";
+import { propsAddBookModal } from "../../../Components/Modals/addBookModal";
+import { propsCancelListModal } from "../../../Components/Modals/cancelListModal";
 import { Button } from "../../../Components/util/Button";
 import { CardComponent } from "../../../Components/util/Card";
 import useBookContext from "../../../Hooks/useBookContext";
@@ -20,7 +20,8 @@ import useGoogleBooksContext from "../../../Hooks/useGoogleBooksContext";
 import usePostsContext from "../../../Hooks/usePostsContext";
 import useUserBookContext from "../../../Hooks/useUserBookContext";
 import useUserContext from "../../../Hooks/useUserContext";
-import { BsBookshelf, BsFillChatSquareFill } from "react-icons/bs";
+import { BsFillChatSquareFill } from "react-icons/bs";
+import dynamic from "next/dynamic";
 
 export default function Home() {
   const {
@@ -67,6 +68,18 @@ export default function Home() {
   function handleCloseCancelListModal() {
     setCancelListModal(false);
   }
+
+  const AddBookModalComponent = dynamic<propsAddBookModal>(() => {
+    return import("../../../Components/Modals/addBookModal").then(
+      (comp) => comp.AddBookModalComponent
+    );
+  });
+
+  const CancelListModalComponent = dynamic<propsCancelListModal>(() => {
+    return import("../../../Components/Modals/cancelListModal").then(
+      (comp) => comp.CancelListModalComponent
+    );
+  });
 
   useEffect(() => {
     getBook(id);
@@ -274,7 +287,9 @@ export default function Home() {
           </div>
         </CardComponent>
         {cancelListkModal ? (
-          <CancelListModal onClose={() => handleCloseCancelListModal()}>
+          <CancelListModalComponent
+            onClose={() => handleCloseCancelListModal()}
+          >
             <GrFormClose
               size={20}
               className="absolute right-1 top-1 cursor-pointer hover:scale-125"
@@ -303,7 +318,7 @@ export default function Home() {
                 </button>
               </div>
             </div>
-          </CancelListModal>
+          </CancelListModalComponent>
         ) : null}
         {addBookModal ? (
           <AddBookModalComponent onClose={handleCloseAddBookModal}>

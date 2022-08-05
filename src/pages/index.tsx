@@ -8,7 +8,8 @@ import * as yup from "yup";
 import { Button } from "../Components/util/Button";
 import { Link } from "../Components/util/Link";
 import { useState } from "react";
-import { ModalEditComponent } from "../Components/Modals/authModal";
+import { propsAuthModal } from "../Components/Modals/authModal";
+import dynamic from "next/dynamic";
 
 export default function Home() {
   const [modal, setModal] = useState(false);
@@ -48,6 +49,12 @@ export default function Home() {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+  });
+
+  const ModalAuthComponent = dynamic<propsAuthModal>(() => {
+    return import("../Components/Modals/authModal").then(
+      (comp) => comp.ModalAuthComponent
+    );
   });
 
   const onLogin = (data) => console.log(data);
@@ -109,7 +116,7 @@ export default function Home() {
         </div>
       </footer>
       {modal ? (
-        <ModalEditComponent onClose={handleCloseModal}>
+        <ModalAuthComponent onClose={handleCloseModal}>
           <div className="bg-white w-[80%] flex justify-center items-center flex-col py-5 px-3 rounded-lg">
             <p className="font-bold text-blue-900 text-4xl">Sign in with</p>
             <form onSubmit={handleSubmit(onLogin)} className={"w-[80%]"}>
@@ -170,7 +177,7 @@ export default function Home() {
               </div>
             </form>
           </div>
-        </ModalEditComponent>
+        </ModalAuthComponent>
       ) : null}
     </div>
   );

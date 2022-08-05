@@ -1,11 +1,14 @@
 import { ReactNode } from "react";
 
-interface propsNewModal {
+export interface propsDropDownMenuModal {
   onClose: () => void;
   children: ReactNode;
 }
 
-export function ModalDropDownMenu({ onClose, children }: propsNewModal) {
+export function ModalDropDownMenu({
+  onClose,
+  children,
+}: propsDropDownMenuModal) {
   const handleOutsideClick = (e: any) => {
     if (e.target.id) onClose();
   };

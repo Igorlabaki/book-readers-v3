@@ -9,11 +9,12 @@ import useUserBookContext from "../../Hooks/useUserBookContext";
 import useGoogleBooksContext from "../../Hooks/useGoogleBooksContext";
 import usePostsContext from "../../Hooks/usePostsContext";
 import useUserContext from "../../Hooks/useUserContext";
-import { AddBookModalComponent } from "../Modals/addBookModal";
-import { CancelListModal } from "../Modals/cancelListModal";
+import { propsAddBookModal } from "../Modals/addBookModal";
+import { propsCancelListModal } from "../Modals/cancelListModal";
 import { Button } from "../util/Button";
 import { CardComponent } from "../util/Card";
 import { ListOptions } from "./listOptions";
+import dynamic from "next/dynamic";
 
 interface BookCardProps {
   bookUser: any;
@@ -35,6 +36,7 @@ export function BookCard({ bookUser, userBookFilter }: BookCardProps) {
 
   const [addBookModal, setAddBookModal] = useState(false);
   const [cancelListkModal, setCancelListModal] = useState(false);
+  const [showleDeleteIcon, setshowDeleteIcon] = useState(false);
 
   const [text, setText] = useState("");
 
@@ -54,7 +56,17 @@ export function BookCard({ bookUser, userBookFilter }: BookCardProps) {
     setCancelListModal(false);
   }
 
-  const [showleDeleteIcon, setshowDeleteIcon] = useState(false);
+  const CancelListModalComponent = dynamic<propsCancelListModal>(() => {
+    return import("../Modals/cancelListModal").then(
+      (comp) => comp.CancelListModalComponent
+    );
+  });
+
+  const AddBookModalComponent = dynamic<propsAddBookModal>(() => {
+    return import("../Modals/addBookModal").then(
+      (comp) => comp.AddBookModalComponent
+    );
+  });
 
   const router = useRouter();
 
@@ -173,7 +185,7 @@ export function BookCard({ bookUser, userBookFilter }: BookCardProps) {
         </div>
       </CardComponent>
       {cancelListkModal ? (
-        <CancelListModal onClose={() => handleCloseCancelListModal()}>
+        <CancelListModalComponent onClose={() => handleCloseCancelListModal()}>
           <GrFormClose
             size={20}
             className="absolute right-1 top-1 cursor-pointer hover:scale-125"
@@ -188,7 +200,7 @@ export function BookCard({ bookUser, userBookFilter }: BookCardProps) {
               <button
                 onClick={() => {
                   handleCloseCancelListModal();
-                  deleteUserBooks(userBookFilter[0], bookBd.id);
+                  deleteUserBooks(userBookFilter[0], bookBd?.id);
                 }}
                 className="py-2  shadow-pattern hover:brightness-125 w-[100px] rounded-lg text-white font-semibold bg-blue-900"
               >
@@ -202,7 +214,7 @@ export function BookCard({ bookUser, userBookFilter }: BookCardProps) {
               </button>
             </div>
           </div>
-        </CancelListModal>
+        </CancelListModalComponent>
       ) : null}
       {addBookModal ? (
         <AddBookModalComponent onClose={handleCloseAddBookModal}>

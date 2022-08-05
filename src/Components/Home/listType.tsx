@@ -3,13 +3,13 @@ import { useRouter } from "next/router";
 import { type } from "os";
 import React, { memo } from "react";
 
-interface Props {
+export interface PropsListType {
   listType: Books[];
   text: string;
   type: string;
 }
 
-export function ListType({ listType, text, type }: Props) {
+export function ListTypeComponent({ listType, text, type }: PropsListType) {
   const router = useRouter();
 
   return (
@@ -26,6 +26,7 @@ export function ListType({ listType, text, type }: Props) {
                 onClick={() => {
                   router.push(`/search/id/${book.google}`);
                 }}
+                key={book.google}
                 className="relative h-[200px] w-[120px] cursor-pointer rounded-md overflow-hidden shadow-pattern flex justify-center items-center text-center bg-black text-stone-100"
               >
                 <p className="absolute left-1 top-1 text-white font-semibold bg-black p-1 rounded-full h-6 w-6 flex justify-center items-center text-md">
@@ -63,6 +64,3 @@ export function ListType({ listType, text, type }: Props) {
     </>
   );
 }
-
-const MemoizedListType = memo(ListType);
-export { MemoizedListType };

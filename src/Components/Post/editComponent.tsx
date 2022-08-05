@@ -94,6 +94,3 @@ export function EditComponent({
     </>
   );
 }
-
-const MemoizedEditComponent = memo(EditComponent);
-export { MemoizedEditComponent };

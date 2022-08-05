@@ -1,7 +1,8 @@
+import dynamic from "next/dynamic";
 import React, { memo, useEffect, useState } from "react";
 import useUserBookContext from "../../Hooks/useUserBookContext";
 import { CardComponent } from "../util/Card";
-import { ListType } from "./listType";
+import { PropsListType } from "./listType";
 
 export function MostListsComponent() {
   const { getMostReadBook, getMostPostBook, mostReadList, mostPostsList } =
@@ -11,13 +12,13 @@ export function MostListsComponent() {
 
   useEffect(() => {
     getMostReadBook();
-    getMostPostBook();
-  }, [listType]);
-
-  useEffect(() => {
-    getMostReadBook();
-    getMostPostBook();
   }, []);
+
+  console.log("Minha prima", listType);
+
+  const ListTypeComponent = dynamic<PropsListType>(() => {
+    return import("./listType").then((comp) => comp.ListTypeComponent);
+  });
 
   return (
     <CardComponent>
@@ -56,20 +57,20 @@ export function MostListsComponent() {
         </div>
         <div className="flex space-x-2 justify-start items-center overflow-hidden">
           {listType.includes("Most Read") ? (
-            <ListType
+            <ListTypeComponent
               listType={mostReadList}
               text={"No books register yet"}
               type="books"
             />
           ) : listType.includes("Most Posted") ? (
-            <ListType
+            <ListTypeComponent
               listType={mostPostsList}
               text={`No post register yet`}
               type="post"
             />
           ) : listType.includes("Rating Rank") ? (
             <>
-              <ListType
+              <ListTypeComponent
                 listType={[]}
                 text={`No rating register yet`}
                 type="Rating rank"

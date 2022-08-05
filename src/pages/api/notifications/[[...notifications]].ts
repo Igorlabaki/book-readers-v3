@@ -54,5 +54,21 @@ export default async function Notifications(req:NextApiRequest,resp: NextApiResp
         }
       }
 
+      if(req.method === 'PUT'){
+        const commentInfo = JSON.parse(req.body)
+        try {
+            const post = await prisma.notifications.update({
+               where:{
+                id: commentInfo.id
+               },
+               data:{
+                view: true
+               }
+            })
+            return resp.status(200).json(post)
+        } catch (error) {
+            return resp.json({ message: error.message})
+        }
+    }
 
 }

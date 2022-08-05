@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 interface UserContextProvider {
   children: ReactNode;
 }
@@ -7,6 +7,7 @@ interface UserContext {
   user?: any;
   allUser?: any;
   profile?: any;
+  followerFilter?: any;
   getUser?: (id: string) => void;
   getAllUser?: () => void;
   getProfile?: (id: string) => void;
@@ -26,6 +27,7 @@ export function UserContextProvider({ children }: UserContextProvider) {
   const [user, setUser] = useState<any>(null);
   const [allUser, setAllUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
+  const [followerFilter, setFollowerFilter] = useState<any>(null);
   const [loadingProfile, setLoadingProfile] = useState<boolean>(true);
 
   async function getAllUser() {
@@ -104,6 +106,7 @@ export function UserContextProvider({ children }: UserContextProvider) {
         profile,
         loadingProfile,
         allUser,
+        followerFilter,
         getUser,
         getAllUser,
         getProfile,
