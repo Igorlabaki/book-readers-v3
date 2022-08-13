@@ -1,4 +1,5 @@
 import { Comments, Posts } from "@prisma/client";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { memo, useEffect, useState } from "react";
 import { EditComponent } from "./editComponent";
@@ -16,15 +17,17 @@ export function CommentComponent({ post }: PropsInterface) {
       {post?.Comments?.map((comment: any) => {
         return (
           <>
-            <div key={comment?.id} className={`ml-[75px] flex space-x-2 my-2`}>
-              <img
-                src={comment?.user?.image}
-                alt="avatar"
-                className="h-9 w-9 rounded-full cursor-pointer"
-                onClick={() => {
-                  router.push(`/profile/${comment?.user?.id}`);
-                }}
-              />
+            <div key={comment?.id} className={` flex space-x-2 my-2`}>
+              <figure className="rounded-full  h-12 w-12 cursor-pointer overflow-hidden relative">
+                <img
+                  src={comment?.user?.image}
+                  alt="avatar user"
+                  className="w-full h-full"
+                  onClick={() => {
+                    router.push(`/profile/${comment?.user?.id}`);
+                  }}
+                />
+              </figure>
               <div className="w-[100%]">
                 <div className="flex justify-between items-center cursor cursor-pointer">
                   <p

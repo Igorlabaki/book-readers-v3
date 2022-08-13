@@ -6,6 +6,7 @@ import { SearchInput } from "../SearchInput";
 import { Button } from "../util/Button";
 import { FiSearch } from "react-icons/fi";
 import { BookContext } from "../../Context/BooksContext";
+import Image from "next/image";
 
 interface listTypeBookProps {
   type: string;
@@ -55,7 +56,7 @@ export function ListTypeBook({ type, list }: listTypeBookProps) {
         <div className="mt-5">
           {loadingProfile ? (
             <div className="flex space-x-3">
-              <div className="h-[150px] w-[105px] bg-gray-300 rounded-lg shadow-pattern animate-pulse" />
+              <div className="w-[120px] h-[200px] bg-gray-300 rounded-lg shadow-pattern animate-pulse" />
             </div>
           ) : (
             <div className="flex space-x-3 overflow-hidden scroll-auto">
@@ -65,24 +66,25 @@ export function ListTypeBook({ type, list }: listTypeBookProps) {
                   return (
                     <>
                       {item?.book?.smallThumbnail ? (
-                        <img
-                          src={item?.book?.smallThumbnail}
-                          alt=""
-                          className="h-[150px] w-[105px] bg-gray-300 rounded-lg shadow-pattern cursor-pointer"
-                          key={item?.book?.id}
-                          onClick={() => {
-                            router.push(`/search/id/${item?.book?.google}`);
-                          }}
-                        />
+                        <figure className="w-[120px] h-[200px] rounded-md cursor-pointer overflow-hidden relative">
+                          <img
+                            src={item?.book?.smallThumbnail}
+                            alt="book cover"
+                            onClick={() => {
+                              router.push(`/search/id/${item?.book.google}`);
+                            }}
+                          />
+                        </figure>
                       ) : (
-                        <img
-                          src="/images/photos/book-default.jpg"
-                          alt=""
-                          className="w-[130px] h-[180] shadow-pattern rounded-md cursor-pointer"
-                          onClick={() => {
-                            router.push(`/search/id/${item.book.google}`);
-                          }}
-                        />
+                        <figure className="w-[120px] h-[200px] shadow-pattern rounded-md overflow-hidden cursor-pointer relative">
+                          <img
+                            src="/images/photos/book-default.jpg"
+                            alt="book cover"
+                            onClick={() => {
+                              router.push(`/search/id/${item?.book.google}`);
+                            }}
+                          />
+                        </figure>
                       )}
                     </>
                   );

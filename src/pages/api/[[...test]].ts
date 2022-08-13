@@ -3,9 +3,17 @@ import { prisma } from "../../../lib/prisma";
 
 export default async function getUser(req:NextApiRequest,resp: NextApiResponse){
 
- try {
+  const { test } = req.query
 
-  const user = await prisma.user.findMany({
+ try {
+  const users = await prisma.user.findMany({
+    where: {
+      NOT: {
+        id: {
+          equals: test[0].toString(),
+        },
+      },
+    },
     include:{
       Books: {
         include:{
@@ -51,12 +59,11 @@ export default async function getUser(req:NextApiRequest,resp: NextApiResponse){
       },
     }
   });
-
-  return resp.status(200).json(user)
+  return resp.status(200).json(users)
 
  } catch (error) {
   console.log(error)
-  return resp.json({ message: error.message})
+  return resp.json(error)
 
  }
 

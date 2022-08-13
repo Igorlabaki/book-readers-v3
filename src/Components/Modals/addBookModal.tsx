@@ -1,18 +1,21 @@
 import { ReactNode } from "react";
 
-interface propsNewModal {
+export interface propsAddBookModal {
   onClose: () => void;
   children: ReactNode;
 }
 
-export function AddBookModalComponent({ onClose, children }: propsNewModal) {
+export function AddBookModalComponent({
+  onClose,
+  children,
+}: propsAddBookModal) {
   const handleOutsideClick = (e: any) => {
     if (e.target.id) onClose();
   };
 
   return (
     <>
-      <div className="flex w-full h-full  absolute ">
+      <div className="flex w-full h-full justify-center items-center absolute ">
         <div
           id="external"
           onClick={handleOutsideClick}

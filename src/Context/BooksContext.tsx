@@ -30,12 +30,14 @@ interface book {
 
 interface BookContext {
   bookBd?: any;
+  average?: any;
   getBookBd?: (googleId: string) => void;
 
   createBook?: (
     bookInput: book,
     userId: string,
     typeList: string,
+    rate?: number,
     text?: string
   ) => void;
 
@@ -49,19 +51,22 @@ export const BookContext = createContext<BookContext>(initialState);
 export function BookContextProvider({ children }: BookContextProvider) {
   const { createBookPost } = usePostsContext();
   const [bookBd, setBookBd] = useState();
+  const [average, setAverage] = useState();
 
   async function getBookBd(googleId) {
     const result = await fetch(`/api/book/${googleId}`, {
       method: "GET",
     });
     const fetchData = await result.json();
-    setBookBd(fetchData);
+    setBookBd(fetchData[0]);
+    setAverage(fetchData[1]);
   }
 
   async function createBook(
     bookInput: book,
     userId: string,
     typeList: string,
+    rate?: number,
     text?: string
   ) {
     try {
@@ -70,7 +75,7 @@ export function BookContextProvider({ children }: BookContextProvider) {
         body: JSON.stringify(bookInput),
       });
       const fetchData = await result.json();
-      createBookPost(fetchData.id, userId, typeList, text);
+      createBookPost(fetchData.id, userId, typeList, rate, text);
     } catch (error) {
       console.log(error.message);
     }
@@ -80,6 +85,7 @@ export function BookContextProvider({ children }: BookContextProvider) {
     <BookContext.Provider
       value={{
         bookBd,
+        average,
         createBook,
         getBookBd,
       }}

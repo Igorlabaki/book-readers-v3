@@ -143,6 +143,7 @@ model UserBooks {
   created_at DateTime @default(now())
   listType   String   @default("Read")
   updatedAt  DateTime @updatedAt
+  rate       Int?
 
   @@map("userBooks")
 }

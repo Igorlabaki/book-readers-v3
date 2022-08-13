@@ -1,11 +1,14 @@
 import { ReactNode } from "react";
 
-interface propsNewModal {
+export interface propsCancelListModal {
   onClose: () => void;
   children: ReactNode;
 }
 
-export function CancelListModal({ onClose, children }: propsNewModal) {
+export function CancelListModalComponent({
+  onClose,
+  children,
+}: propsCancelListModal) {
   const handleOutsideClick = (e: any) => {
     if (e.target.id) onClose();
   };

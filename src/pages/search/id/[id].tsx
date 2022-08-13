@@ -2,17 +2,15 @@ import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { BiBookAdd } from "react-icons/bi";
 import { BsStar } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
 import { IoMdClose } from "react-icons/io";
 import { MdDone, MdKeyboardArrowDown } from "react-icons/md";
-import { TiPlus } from "react-icons/ti";
 import HearderComponent from "../../../Components/Header";
 import { ListOptions } from "../../../Components/list/listOptions";
-import { AddBookModalComponent } from "../../../Components/Modals/addBookModal";
-import { CancelListModal } from "../../../Components/Modals/cancelListModal";
+import { propsAddBookModal } from "../../../Components/Modals/addBookModal";
+import { propsCancelListModal } from "../../../Components/Modals/cancelListModal";
 import { Button } from "../../../Components/util/Button";
 import { CardComponent } from "../../../Components/util/Card";
 import useBookContext from "../../../Hooks/useBookContext";
@@ -21,6 +19,10 @@ import usePostsContext from "../../../Hooks/usePostsContext";
 import useUserBookContext from "../../../Hooks/useUserBookContext";
 import useUserContext from "../../../Hooks/useUserContext";
 import { BsBookshelf, BsFillChatSquareFill } from "react-icons/bs";
+import dynamic from "next/dynamic";
+import { AiFillStar } from "react-icons/ai";
+import { RatingModals } from "../../../Components/util/RatingModals";
+import { FcComments, FcReading } from "react-icons/fc";
 
 export default function Home() {
   const {
@@ -29,20 +31,14 @@ export default function Home() {
 
   const { book, getBook, getBookByAuthor, authorsBooksList } =
     useGoogleBooksContext();
-  const { createBookPost } = usePostsContext();
-  const { createBook } = useBookContext();
-  const { user } = useUserContext();
-  const { deleteUserBooks, updateUserBook } = useUserBookContext();
-  const [addBookModal, setAddBookModal] = useState(false);
 
-  const [text, setText] = useState("");
-  const [selectValue, setSelectValue] = useState("read");
+  const { user } = useUserContext();
+
+  const [addBookModal, setAddBookModal] = useState(false);
   const [cancelListkModal, setCancelListModal] = useState(false);
   const [showleDeleteIcon, setshowDeleteIcon] = useState(false);
   const [selectRatingModal, setSelectRatingModal] = useState(false);
-  const { getBookBd, bookBd } = useBookContext();
-
-  const router = useRouter();
+  const { getBookBd, bookBd, average } = useBookContext();
 
   function handleOpenAddBookModal() {
     setAddBookModal(true);
@@ -50,10 +46,6 @@ export default function Home() {
 
   function handleCloseAddBookModal() {
     setAddBookModal(false);
-  }
-
-  function handleChange(event) {
-    setSelectValue(event.currentTarget.value);
   }
 
   function handleCloseSelectRatingModal() {
@@ -67,6 +59,7 @@ export default function Home() {
   function handleCloseCancelListModal() {
     setCancelListModal(false);
   }
+  const router = useRouter();
 
   useEffect(() => {
     getBook(id);
@@ -167,38 +160,67 @@ export default function Home() {
                 </div>
                 <div className="flex justify-center items-center space-x-3 w-[100%]">
                   <div className="flex flex-col justify-center items-center">
-                    <FaUsers
-                      size={25}
+                    <FcReading
+                      size={22}
                       className={
                         bookRead?.length > 0 ? `text-blue-900` : "text-gray-400"
                       }
                     />
                     <p
-                      className={
-                        bookRead?.length > 0 ? `text-blue-900` : "text-gray-400"
-                      }
+                      className={`font-semibold
+                        ${
+                          bookRead?.length > 0
+                            ? `text-blue-900`
+                            : "text-gray-400"
+                        }
+                      `}
                     >
                       {bookRead?.length}
                     </p>
                   </div>
                   <div className="flex flex-col justify-center items-center">
-                    <BsFillChatSquareFill
-                      size={25}
+                    <FcComments
+                      size={20}
                       className={
                         bookBd?.Posts?.length > 0
                           ? `text-blue-900`
                           : "text-gray-400"
                       }
+                      onClick={() => {
+                        router.push(`/allBookPosts/${book.id}`);
+                      }}
                     />
 
                     <p
-                      className={
-                        bookBd?.User?.length > 0
-                          ? `text-blue-900`
-                          : "text-gray-400"
-                      }
+                      className={`font-semibold
+                       ${
+                         bookBd?.User?.length > 0
+                           ? `text-blue-900`
+                           : "text-gray-400"
+                       }`}
                     >
                       {bookBd?.User?.length}
+                    </p>
+                  </div>
+                  <div className="flex flex-col justify-center items-center">
+                    <AiFillStar
+                      size={20}
+                      className={
+                        average?._avg?.rate > 0
+                          ? `text-yellow-400`
+                          : "text-gray-400"
+                      }
+                    />
+                    <p
+                      className={`font-semibold
+                       ${
+                         average?._avg?.rate > 0
+                           ? `text-blue-900`
+                           : "text-gray-400"
+                       }
+                      `}
+                    >
+                      {average?._avg?.rate ? average?._avg?.rate : 0}
                     </p>
                   </div>
                 </div>
@@ -273,124 +295,13 @@ export default function Home() {
             })}
           </div>
         </CardComponent>
-        {cancelListkModal ? (
-          <CancelListModal onClose={() => handleCloseCancelListModal()}>
-            <GrFormClose
-              size={20}
-              className="absolute right-1 top-1 cursor-pointer hover:scale-125"
-              onClick={() => handleCloseCancelListModal()}
-            />
-            <div className=" bg-white py-3 px-5 space-y-10 rounded-lg">
-              <p className="text-md font-semibold">
-                Removing a book deletes your rating, review, etc. Remove this
-                book from all your shelves?
-              </p>
-              <div className="w-[100%] flex justify-center items-center space-x-5">
-                <button
-                  onClick={() => {
-                    handleCloseCancelListModal();
-                    deleteUserBooks(userbook[0], bookBd.id);
-                  }}
-                  className="py-2  shadow-pattern hover:brightness-125 w-[100px] rounded-lg text-white font-semibold bg-blue-900"
-                >
-                  Ok
-                </button>
-                <button
-                  onClick={() => handleCloseCancelListModal()}
-                  className="py-2 shadow-pattern hover:brightness-125 w-[100px] rounded-lg text-white font-semibold bg-blue-900"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </CancelListModal>
-        ) : null}
-        {addBookModal ? (
-          <AddBookModalComponent onClose={handleCloseAddBookModal}>
-            <div className="bg-white w-[80%] flex flex-row  justify-start py-5 px-5 rounded-lg  relative ">
-              <GrFormClose
-                size={20}
-                className="absolute right-1 top-1 cursor-pointer hover:scale-125"
-                onClick={() => handleCloseAddBookModal()}
-              />
-              <form className=" space-y-2 w-[98%]">
-                <div className=" flex flex-row space-x-3 w-[100%]">
-                  {book?.volumeInfo?.imageLinks ? (
-                    <img
-                      src={book?.volumeInfo?.imageLinks?.thumbnail}
-                      alt=""
-                      className="w-[150px] h-[200px] shadow-pattern rounded-md"
-                    />
-                  ) : (
-                    <img
-                      src="/images/photos/book-default.jpg"
-                      alt=""
-                      className="w-[160px] h-[200px] shadow-pattern rounded-lg"
-                    />
-                  )}
-                  <div className="space-y-1 w-[100%]">
-                    <h2 className="font-semibold text-2xl ">
-                      {book?.volumeInfo?.title}
-                    </h2>
-                    {book?.volumeInfo?.authors?.at(0) ? (
-                      <p className="font-light italic">
-                        by&nbsp;
-                        {book?.volumeInfo?.authors?.at(0)}
-                      </p>
-                    ) : null}
-                    <div className="flex space-x-1">
-                      <BsStar className="hover:text-yellow-300" />
-                      <BsStar />
-                      <BsStar />
-                      <BsStar />
-                      <BsStar />
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <p className="font-semibold">What do you think about?</p>
-                  <textarea
-                    placeholder={"Enter your review..."}
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    className="resize-none w-[100%] bg-bg-gray
-                    rounded-md px-3 py-3 outline-none h-[180px]"
-                  ></textarea>
-                  <Button
-                    title="Post"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      {
-                        if (
-                          user?.Books?.filter(
-                            (item) => item.book?.google === book?.id
-                          ).length > 0
-                        ) {
-                          updateUserBook(
-                            user?.Books?.filter(
-                              (item) => item.book?.google === book?.id
-                            )[0]?.id,
-                            "Read",
-                            text
-                          );
-                        } else if (bookBd?.google === book?.id) {
-                          createBookPost(bookBd?.id, user?.id, "Read", text);
-                        } else {
-                          createBook(book, user?.id, "Read", text);
-                        }
-                      }
-                      router.push("/homePage");
-                    }}
-                    disabled={text ? false : true}
-                    className={`${
-                      !text ? "bg-[#BBBFC1]" : "bg-blue-900"
-                    } flex text-white p-[10px] rounded-[0.25rem] w-[100%] justify-center items-center hover:brightness-105`}
-                  ></Button>
-                </div>
-              </form>
-            </div>
-          </AddBookModalComponent>
-        ) : null}
+        <RatingModals
+          addBookModal={addBookModal}
+          cancelListkModal={cancelListkModal}
+          handleCloseAddBookModal={handleCloseAddBookModal}
+          handleCloseCancelListModal={handleCloseCancelListModal}
+          userbook={userbook}
+        />
       </div>
     </>
   );

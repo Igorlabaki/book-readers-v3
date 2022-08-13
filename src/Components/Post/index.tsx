@@ -1,5 +1,5 @@
 import moment from "moment";
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, startTransition, useEffect, useState } from "react";
 import { CardComponent } from "../util/Card";
 
 import useUserContext from "../../Hooks/useUserContext";
@@ -19,6 +19,9 @@ import {
 import { CommentComponent, MemoizedCommentComponent } from "./commentComponent";
 import { useRouter } from "next/router";
 import useNotificationContext from "../../Hooks/useNotificationContext copy";
+import Image from "next/image";
+import { AiFillStar } from "react-icons/ai";
+import { toNestError } from "@hookform/resolvers";
 
 export function PostComponent({ post }) {
   const [textAreaIsOpen, setTextAreaIsOpen] = useState<boolean>(false);
@@ -34,17 +37,20 @@ export function PostComponent({ post }) {
     (book) => book.fk_id_book === post?.book?.id
   );
 
+  const stars = [1, 2, 3, 4, 5];
   return (
     <CardComponent>
       <div className="flex space-x-4">
-        <img
-          src={post?.user?.image}
-          alt="profile photo"
-          className="w-[60px] h-[60px] rounded-full cursor-pointer shadow-pattern"
-          onClick={() => {
-            router.push(`/profile/${post.user.id}`);
-          }}
-        />
+        <figure className="rounded-full w-[60px] h-[60px]  cursor-pointer overflow-hidden relative">
+          <img
+            src={post?.user?.image}
+            alt="avatar user"
+            className="w-full h-full"
+            onClick={() => {
+              router.push(`/profile/${post.user.id}`);
+            }}
+          />
+        </figure>
         <div className="w-full">
           <div className="flex justify-between items-center">
             <div className="flex space-x-3 justify-center items-center">
@@ -57,15 +63,17 @@ export function PostComponent({ post }) {
                 {post?.user?.username}
               </p>
               {post?.book?.id ? (
-                <p className="italic  text-gray-700 text-sm">
-                  {listType[0]?.listType === "Read"
-                    ? `has read`
-                    : listType[0]?.listType === "Currently Reading"
-                    ? `is currently reading`
-                    : listType[0]?.listType.includes("Want to Read")
-                    ? `wants to read`
-                    : null}
-                </p>
+                <>
+                  <p className="italic  text-gray-700 text-sm">
+                    {listType[0]?.listType === "Read"
+                      ? `has read`
+                      : listType[0]?.listType === "Currently Reading"
+                      ? `is currently reading`
+                      : listType[0]?.listType.includes("Want to Read")
+                      ? `wants to read`
+                      : null}
+                  </p>
+                </>
               ) : post?.action ? (
                 <div className="flex justify-start items-center space-x-2">
                   <p className="text-sm italic">{post?.action}</p>
@@ -80,37 +88,56 @@ export function PostComponent({ post }) {
                 </div>
               ) : null}
             </div>
-
-            <MemoizedMenuButtonComponent
-              type="post"
-              openTextAreaModal={setTextAreaIsOpen}
-              post={post}
-            />
+            <div className="flex space-x-10">
+              {listType[0]?.rate != null ? (
+                <p className="flex">
+                  {stars.map((item) => {
+                    return (
+                      <AiFillStar
+                        key={item}
+                        color={`${
+                          item <= listType[0]?.rate ? "#CCCC00" : "#c3c6ca"
+                        }`}
+                      />
+                    );
+                  })}
+                </p>
+              ) : null}
+              <MemoizedMenuButtonComponent
+                type="post"
+                openTextAreaModal={setTextAreaIsOpen}
+                post={post}
+              />
+            </div>
           </div>
           <p className="font-semibold text-[11px] text-gray-400">{`Posted at ${moment(
             post?.updatedAt
           ).format("MMMM Do YYYY, h:mm a")}`}</p>
           {post?.book_id ? (
-            <div>
-              <div className="mt-3 flex space-x-3">
+            <div className=" w-[100%]">
+              <div className="mt-3 flex space-x-3 w-[100%]">
                 {post?.book?.smallThumbnail ? (
-                  <img
-                    src={post?.book?.smallThumbnail}
-                    alt=""
-                    onClick={() => {
-                      router.push(`/search/id/${post.book.google}`);
-                    }}
-                    className="w-[200px] shadow-pattern rounded-md cursor-pointer"
-                  />
+                  <figure className="w-[70%] h-[200px] rounded-md cursor-pointer overflow-hidden relative">
+                    <img
+                      src={post?.book?.smallThumbnail}
+                      alt="book cover"
+                      className="w-full h-full"
+                      onClick={() => {
+                        router.push(`/search/id/${post?.book.google}`);
+                      }}
+                    />
+                  </figure>
                 ) : (
-                  <img
-                    src="/images/photos/book-default.jpg"
-                    alt=""
-                    className="w-[130px] h-[180] shadow-pattern rounded-md cursor-pointer"
-                    onClick={() => {
-                      router.push(`/search/id/${post.book.google}`);
-                    }}
-                  />
+                  <figure className="w-[70%] shadow-pattern rounded-md overflow-hidden cursor-pointer relative">
+                    <img
+                      src="/images/photos/book-default.jpg"
+                      alt="book cover"
+                      className="w-full h-full"
+                      onClick={() => {
+                        router.push(`/search/id/${post?.book.google}`);
+                      }}
+                    />
+                  </figure>
                 )}
                 <div>
                   <h3
@@ -162,11 +189,13 @@ export function PostComponent({ post }) {
                 setcommentText("");
               }}
             >
-              <img
-                src={user?.image}
-                alt="profile photo"
-                className="h-8 w-8 rounded-full"
-              />
+              <figure className="rounded-full w-10 flex h-10 cursor-pointer overflow-hidden relative">
+                <img
+                  src={user?.image}
+                  alt="avatar user"
+                  className="w-full h-full"
+                />
+              </figure>
               <input
                 type="text"
                 placeholder="Write a comment..."
@@ -183,5 +212,5 @@ export function PostComponent({ post }) {
   );
 }
 
-const MemoizedPostComopnent = memo(PostComponent);
-export { MemoizedPostComopnent };
+const MemoizedPostComponent = memo(PostComponent);
+export { MemoizedPostComponent };

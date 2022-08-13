@@ -13,6 +13,7 @@ export default async function getUser(req:NextApiRequest,resp: NextApiResponse){
                },
                data:{
                 listType: postInfo.listType,
+                rate: postInfo.rate
                }
             })
 
@@ -70,7 +71,29 @@ export default async function getUser(req:NextApiRequest,resp: NextApiResponse){
           }  catch (error) {
             return resp.status(200).json({ message: error.message})
         }
-      }else{
+      }else if(req.query.userBook[0] === 'ratingBook'){
+        try {
+          const response = await prisma.books.findMany({
+            take: 5,
+            include:{
+              Posts:{
+                include:{
+                  book: true
+                }
+              },
+            },
+            orderBy:{
+              Posts: {
+                _count: 'desc',
+              }
+            }
+          });
+            return resp.status(200).json(response)
+          }  catch (error) {
+            return resp.status(200).json({ message: error.message})
+        }
+      }
+      else{
         try {
           const response = await prisma.books.findMany({
             take: 5,
@@ -148,7 +171,8 @@ export default async function getUser(req:NextApiRequest,resp: NextApiResponse){
                         id: postInfo.userId
                         }
                     },
-                    listType: postInfo.listType
+                    listType: postInfo.listType,
+                    rate: postInfo.rate
                 },
             });
               return resp.json(savedBookUser)

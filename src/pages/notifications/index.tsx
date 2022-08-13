@@ -1,4 +1,5 @@
 import { Notifications } from "@prisma/client";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import HeaderComponent from "../../Components/Header";
 import { CardComponent } from "../../Components/util/Card";
@@ -28,11 +29,18 @@ export default function NotificationsPage() {
                   }
                   className={`hover:bg-secundary rounded-md py-2 px-3 w-[100%] cursor-pointer text-sm flex space-x-3 justify-start items-center`}
                 >
-                  <img
-                    src={notification?.userAction?.image}
-                    alt=""
-                    className="h-10 w-10 rounded-full"
-                  />
+                  <figure className="rounded-full h-12 w-12  cursor-pointer overflow-hidden relative">
+                    <Image
+                      src={notification?.userAction?.image}
+                      layout="fill"
+                      objectFit="cover"
+                      alt="avatar user"
+                      onClick={() => {
+                        router.push(`/profile/${notification?.userAction?.id}`);
+                      }}
+                    />
+                  </figure>
+
                   <p>{`${notification?.userAction?.username} ${notification?.text}`}</p>
                 </div>
               );

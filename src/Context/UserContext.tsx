@@ -8,7 +8,7 @@ interface UserContext {
   allUser?: any;
   profile?: any;
   getUser?: (id: string) => void;
-  getAllUser?: () => void;
+  getAllUser?: (userId: String) => void;
   getProfile?: (id: string) => void;
   getPagesRead?: (memberBooks) => any;
   getLastRead?: (memberBooks) => any;
@@ -16,6 +16,7 @@ interface UserContext {
   getShortestBook?: (memberBooks) => any;
   getAveragePages?: (memberBooks) => any;
   loadingProfile?: boolean;
+  loadingAllUser?: boolean;
 }
 
 const initialState: UserContext = {};
@@ -27,11 +28,14 @@ export function UserContextProvider({ children }: UserContextProvider) {
   const [allUser, setAllUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loadingProfile, setLoadingProfile] = useState<boolean>(true);
+  const [loadingAllUser, setLoadingAllUser] = useState<boolean>(true);
 
-  async function getAllUser() {
-    const response = await fetch(`/api/test`);
+  async function getAllUser(userId: String) {
+    setLoadingAllUser(true);
+    const response = await fetch(`/api/${userId}`);
     const result = await response.json();
     setAllUser(() => result);
+    setLoadingAllUser(false);
   }
 
   async function getUser(userId: string) {
@@ -102,6 +106,7 @@ export function UserContextProvider({ children }: UserContextProvider) {
       value={{
         user,
         profile,
+        loadingAllUser,
         loadingProfile,
         allUser,
         getUser,

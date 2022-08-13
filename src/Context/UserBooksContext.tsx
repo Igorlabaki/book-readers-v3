@@ -12,15 +12,19 @@ interface UserBookContextProvider {
 interface UserBookContext {
   mostReadList?: Books[];
   mostPostsList?: Books[];
+  ratingBookList?: Books[];
   userBookBd?: UserBooks;
   getMostReadBook?: () => void;
   getMostPostBook?: () => void;
   getUserBook?: (userBookId: String) => void;
   deleteUserBooks?: (userBook: UserBooks, bookId: string) => void;
 
+  loadingTypeList?: boolean;
+
   updateUserBook?: (
     userBookId: string,
     listType: string,
+    rate?: number,
     text?: string
   ) => void;
 }
@@ -35,18 +39,22 @@ export function UserBookContextProvider({ children }: UserBookContextProvider) {
   const { getBookBd } = useBookContext();
 
   const [mostReadList, setMostReadList] = useState<Books[]>([]);
+  const [ratingBookList, setRatingBookList] = useState<Books[]>([]);
   const [mostPostsList, setMostPostsList] = useState<Books[]>([]);
   const [userBookBd, setuserBookBd] = useState<UserBooks>();
+  const [loadingTypeList, setloadingTypeList] = useState<boolean>();
 
   async function updateUserBook(
     userBookId: string,
     listType: string,
+    rate?: number,
     text?: string
   ) {
     const date = new Date();
     const data = {
       id: userBookId,
       listType: listType,
+      rate: rate,
       text: text,
       date: date,
     };
@@ -65,19 +73,33 @@ export function UserBookContextProvider({ children }: UserBookContextProvider) {
   }
 
   async function getMostReadBook() {
+    setloadingTypeList(true);
     const result = await fetch(`/api/userBook/${"mostReadBook"}`, {
       method: "GET",
     });
     const fetchData = await result.json();
     setMostReadList(fetchData);
+    setloadingTypeList(false);
+  }
+
+  async function getRatingBook() {
+    setloadingTypeList(true);
+    const result = await fetch(`/api/userBook/${"ratingBook"}`, {
+      method: "GET",
+    });
+    const fetchData = await result.json();
+    setRatingBookList(fetchData);
+    setloadingTypeList(false);
   }
 
   async function getMostPostBook() {
+    setloadingTypeList(true);
     const result = await fetch(`/api/userBook/${"mostPostsBook"}`, {
       method: "GET",
     });
     const fetchData = await result.json();
     setMostPostsList(fetchData);
+    setloadingTypeList(false);
   }
 
   async function getUserBook() {
@@ -107,12 +129,13 @@ export function UserBookContextProvider({ children }: UserBookContextProvider) {
       value={{
         mostReadList,
         mostPostsList,
+        ratingBookList,
         userBookBd,
         getUserBook,
         getMostReadBook,
         getMostPostBook,
         deleteUserBooks,
-
+        loadingTypeList,
         updateUserBook,
       }}
     >

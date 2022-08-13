@@ -2,10 +2,16 @@ import React, { memo, useEffect, useState } from "react";
 import useUserBookContext from "../../Hooks/useUserBookContext";
 import { CardComponent } from "../util/Card";
 import { ListType } from "./listType";
+import { MostListLoading } from "./loadingsPages/mostListsLoading";
 
 export function MostListsComponent() {
-  const { getMostReadBook, getMostPostBook, mostReadList, mostPostsList } =
-    useUserBookContext();
+  const {
+    getMostReadBook,
+    getMostPostBook,
+    mostReadList,
+    mostPostsList,
+    loadingTypeList,
+  } = useUserBookContext();
 
   const [listType, setListType] = useState("Most Read");
 
@@ -55,7 +61,9 @@ export function MostListsComponent() {
           </p>
         </div>
         <div className="flex space-x-2 justify-start items-center overflow-hidden">
-          {listType.includes("Most Read") ? (
+          {loadingTypeList ? (
+            <MostListLoading />
+          ) : listType.includes("Most Read") ? (
             <ListType
               listType={mostReadList}
               text={"No books register yet"}

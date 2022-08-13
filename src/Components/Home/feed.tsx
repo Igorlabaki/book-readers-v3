@@ -2,20 +2,13 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import usePostsContext from "../../Hooks/usePostsContext";
 import useUserContext from "../../Hooks/useUserContext";
 import { InputPostComponent } from "../inputPost";
-import { MemoizedPostComopnent, PostComponent } from "../Post";
+import { MemoizedPostComponent } from "../Post";
 import { LoadingComponent } from "../Post/loading";
 import { CardComponent } from "../util/Card";
 
 export function FeedComponent() {
   const [isGetBookLoading, setIsGetBookLoading] = useState(false);
-  const { allPosts, getPosts, isLoading } = usePostsContext();
-  const { user } = useUserContext();
-
-  useEffect(() => {
-    setIsGetBookLoading(true);
-    getPosts(user?.id);
-    setTimeout(() => setIsGetBookLoading(false), 1000);
-  }, [user?.id]);
+  const { allPosts, isLoading } = usePostsContext();
 
   return (
     <>
@@ -33,7 +26,7 @@ export function FeedComponent() {
             </CardComponent>
           ) : (
             allPosts?.map((post) => {
-              return <MemoizedPostComopnent key={post.id} post={post} />;
+              return <MemoizedPostComponent key={post.id} post={post} />;
             })
           )}
         </>
@@ -41,3 +34,6 @@ export function FeedComponent() {
     </>
   );
 }
+
+const MemoizedFeedComponent = memo(FeedComponent);
+export { MemoizedFeedComponent };

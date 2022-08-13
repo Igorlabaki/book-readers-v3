@@ -77,7 +77,7 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
 
 if(req.method === 'GET'){
         const { post } = req.query
-        if(post.length >= 2){
+        if(post[0] === 'user'){
             console.log(post.length >= 2)
             try {
                 const response = await prisma.posts.findFirst({
@@ -110,6 +110,41 @@ if(req.method === 'GET'){
                 }  catch (error) {
                   console.log(error)
                   return resp.status(200).json({ message: error.message})
+              }
+        }else if(post[0] === 'allBookPost'){
+            const { post } = req.query
+            try {
+                const response = await prisma.posts.findMany({
+                  where:{
+                    book:{
+                        google: post[1]
+                    }
+                  },
+                  include:{
+                    user: {
+                        include: {
+                            Books: true
+                        }
+                    },
+                    book: true,
+                    Comments: {
+                        include:{
+                            user: true,
+                            post: true
+                        }
+                    },
+                    Likes: {
+                        include:{
+                            user: true,
+                            post: true,
+                        }
+                    },
+                    userProfile: true
+                },
+                });
+                  return resp.status(200).json(response)
+                }  catch (error) {
+                  return resp.status(200).json(error)
               }
         }
         try {

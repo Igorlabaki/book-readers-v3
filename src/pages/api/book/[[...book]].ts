@@ -47,7 +47,6 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
 
       if(req.query.book ){
         const { book: id } = req.query
-        console.log(req.query)
         try {
           const response = await prisma.books.findFirst({
            where:{
@@ -58,7 +57,18 @@ export default async function Post(req:NextApiRequest,resp: NextApiResponse){
             Posts: true
            }
           });
-            return resp.status(200).json(response)
+          const aggregations = await prisma.userBooks.aggregate({
+           _avg:{
+            rate: true
+           },
+           where:{
+            book:{
+              id: response.id
+            }
+           }
+           
+          })
+            return resp.status(200).json([response , aggregations])
           }  catch (error) {
             return resp.status(200).json({ message: error.message})
         }

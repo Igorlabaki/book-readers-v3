@@ -1,11 +1,14 @@
 import { ReactNode } from "react";
 
-interface propsNewModal {
+export interface propsNotificationModal {
   onClose: () => void;
   children: ReactNode;
 }
 
-export function NotificationModal({ onClose, children }: propsNewModal) {
+export function NotificationModalComponent({
+  onClose,
+  children,
+}: propsNotificationModal) {
   const handleOutsideClick = (e: any) => {
     if (e.target.id) onClose();
   };

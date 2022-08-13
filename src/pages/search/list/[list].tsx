@@ -1,48 +1,14 @@
 import { useEffect, useState } from "react";
-import { BsStar } from "react-icons/bs";
-import { GrFormClose } from "react-icons/gr";
 import { useRouter } from "next/router";
 import { Button } from "../../../Components/util/Button";
-import useBookContext from "../../../Hooks/useBookContext";
 import HearderComponent from "../../../Components/Header";
-import { AddBookModalComponent } from "../../../Components/Modals/addBookModal";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 import useGoogleBooksContext from "../../../Hooks/useGoogleBooksContext";
 import useUserContext from "../../../Hooks/useUserContext";
-import { CardComponent } from "../../../Components/util/Card";
 import { LoadingListComponent } from "../../../Components/list/listLoadingPage";
-import usePostsContext from "../../../Hooks/usePostsContext";
-import { MdKeyboardArrowDown } from "react-icons/md";
-import { ModalSelectRating } from "../../../Components/Modals/selectRatingModal";
-import { ListOptions } from "../../../Components/list/listOptions";
 import { BookCard } from "../../../Components/list/bookCard";
-
-interface SearchProps {
-  search?: any;
-}
-
-interface book {
-  id?: string;
-  searchInfo: {
-    textSnippet?: string;
-  };
-  volumeInfo: {
-    title?: string;
-    subtitle?: string;
-    authors?: string[];
-    publishedDate?: string;
-    description?: string;
-    pageCount?: number;
-    categories?: string[];
-
-    imageLinks: {
-      smallThumbnail?: string;
-      thumbnail?: string;
-    };
-  };
-}
 
 export default function SearchListComponent() {
   const {

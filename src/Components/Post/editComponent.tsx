@@ -1,4 +1,5 @@
 import { Comments, Posts } from "@prisma/client";
+import Image from "next/image";
 import React, { memo, useEffect, useRef, useState } from "react";
 import usePostsContext from "../../Hooks/usePostsContext";
 import useUserContext from "../../Hooks/useUserContext";
@@ -58,7 +59,7 @@ export function EditComponent({
               e.preventDefault();
               postType
                 ? updatePost(post, textInput)
-                : updateComment(comment, textInput, user.id);
+                : updateComment(comment, textInput, user);
               setTextInput("");
             }}
             ref={wrapperRef}
